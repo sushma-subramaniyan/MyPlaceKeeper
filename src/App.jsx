@@ -3,7 +3,7 @@ import Map, { Marker, Popup } from 'react-map-gl';
 import './app.css';
 import Pin from './Pin.jsx';
 import StarIcon from '@mui/icons-material/Star';
-import TimeAgo from 'timeago-react';
+import {format} from 'timeago.js';
 
 function App() {
   // const [value, setValue] = useState(2);
@@ -78,8 +78,10 @@ function App() {
                 <span className="username">
                  {p.username}
                 </span>
-                <span className="date">{TimeAgo}</span>
-              </div>
+              </div> 
+              <span className="date">{format(p.createdAt)}
+      
+      </span>
             </Popup>
           ))} 
       </Map>
