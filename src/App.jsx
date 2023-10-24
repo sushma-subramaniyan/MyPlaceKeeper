@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Map, { Marker, Popup } from 'react-map-gl';
 import './app.css';
-import Pin from './Pin.jsx';
 import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
 import { format } from 'timeago.js';
