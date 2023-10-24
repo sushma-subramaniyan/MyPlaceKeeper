@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Map, { Marker } from 'react-map-gl';
+import Map, { Marker, Popup } from 'react-map-gl';
 import * as React from 'react';
 import "./app.css";
 import Pin from './Pin.jsx'
@@ -13,6 +13,7 @@ function App() {
     latitude: 46,
     zoom: 4,
        });
+       const [showPopup, setShowPopup] = useState(true);
 
 
   return (
