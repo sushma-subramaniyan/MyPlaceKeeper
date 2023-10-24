@@ -1,4 +1,5 @@
 import "../components/register.css"
+import "./Pin"
 import { useState } from "react";
 import CancelIcon from '@mui/icons-material/Cancel';
 

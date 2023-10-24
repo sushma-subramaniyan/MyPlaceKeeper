@@ -5,6 +5,7 @@ import Pin from './Pin.jsx';
 import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
 import { format } from 'timeago.js';
+import Register from './components/Register';
 
 function App() {
   // const [value, setValue] = useState(2);
@@ -95,6 +96,7 @@ function App() {
           )
         ))}
       </Map>
+      <Register/>
     </div>
   );
 }
