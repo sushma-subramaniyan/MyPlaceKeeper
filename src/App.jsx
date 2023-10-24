@@ -1,74 +1,90 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import Map, { Marker, Popup } from 'react-map-gl';
-import * as React from 'react';
-import "./app.css";
-import Pin from './Pin.jsx'
-import { Rating } from '@mui/material';
-
-
-
+import './app.css';
+import Pin from './Pin.jsx';
+import StarIcon from '@mui/icons-material/Star';
 
 function App() {
-  const [value, setValue] = React.useState(2);
-  const [viewState, setViewState] = React.useState({
+  // const [value, setValue] = useState(2);
+  const [pins, setPins] = useState([]); 
+  const [viewState, setViewState] = useState({
     longitude: 17,
     latitude: 46,
     zoom: 4,
-       });
-       const [showPopup, setShowPopup] = useState(true);
+  });
+  const [showPopup, setShowPopup] = useState(true);
 
+  useEffect(() => {
+    const fetchPins = async () => {
+      try {
+        const response = await fetch('http://localhost:5005/api/pins'); 
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          setPins(data); 
+        } else {
+          console.log('Failed to fetch data');
+        }
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    };
+    fetchPins();
+  }, []);
 
   return (
     <div className="App">
       <Map
-       initialViewState={{
-        ...viewState
-      }}
-        onMove={evt => setViewState(evt.viewState)}
-        style={{ height:"100vh"}}
-        mapStyle='mapbox://styles/mapbox/streets-v12'
+        initialViewState={{
+          ...viewState,
+        }}
+        onMove={(evt) => setViewState(evt.viewState)}
+        style={{ height: '100vh' }}
+        mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
       >
+        {pins.map((p) => (
+          <Marker longitude={p.long} latitude={p.lat} anchor="bottom" key={p._id}>
+            <Pin />
+          </Marker>
+        ))}
 
-        <Marker
-          longitude={2.349014}
-          latitude={48.864716}
-          anchor="bottom">
-          <Pin />
-        </Marker>
-
-        {showPopup && (
-      <Popup 
-      longitude={2.349014} 
-      latitude={48.864716}
-        anchor="bottom"
-        closeButton={true}
-        closeOnClick={false}      
-        >
-        <div className='card'>
-          <label>Place</label>
-          <h4 className='place'>EffileTower</h4>
-          <label>Review</label>
-          <p>Beatufil place</p>
-          <label>Rating</label>
-               
-          <Rating
-          name="simple-controlled"
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }} 
-          />
-          <label>Image</label>
-          <label>Information</label>
-          
-
-        </div>
-      </Popup>)}
+         {showPopup &&
+          pins.map((p) => (
+            <Popup
+              longitude={p.long}
+              latitude={p.lat}
+              anchor="top"
+              closeButton={true}
+              closeOnClick={false}
+              key={p._id}
+            >
+              <div className="card">
+                <label>Place</label>
+                <h4 className="place">{p.title}</h4>
+                <label>Review</label>
+                <p className="desc">{p.desc}</p>
+                <label>Rating</label>
+                <div className='star'>
+                <StarIcon className='star' />
+              <StarIcon className='star'/>
+              <StarIcon className='star'/>
+              <StarIcon className='star'/>
+              <StarIcon className='star'/>
+                </div>
+              
+              
+                <label>Information</label>
+                <span className="username">
+                 {p.username}
+                </span>
+                <span className="date">1 hour ago</span>
+              </div>
+            </Popup>
+          ))} 
       </Map>
     </div>
-
-  )
+  );
 }
 
-export default App
+export default App;
