@@ -2,37 +2,40 @@ import { useState } from 'react'
 import Map, { Marker } from 'react-map-gl';
 import * as React from 'react';
 import "./app.css";
+import Pin from './Pin.jsx'
 
 
 
 
 function App() {
   const [viewState, setViewState] = React.useState({
-    longitude: -100,
-    latitude: 40,
-    zoom: 3.5
-  });
- 
+    longitude: 17,
+    latitude: 46,
+    zoom: 4,
+       });
+
 
   return (
     <div className="App">
-   <Map
-      {...viewState}
-      onMove={evt => setViewState(evt.viewState)}
-      style={{width: "100vw", height: "100vh"}}
-      mapStyle="mapbox://styles/mapbox/streets-v9"
-      mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
-    >
-      <Marker 
-      longitude={2.294694} 
-      latitude={48.858093} 
-      offsetLeft={-20} 
-      offsetTop={-10}>
-      <div>You ARE HERE</div>
+      <Map
+       initialViewState={{
+        ...viewState
+      }}
+        onMove={evt => setViewState(evt.viewState)}
+        style={{ height:"100vh"}}
+        mapStyle='mapbox://styles/mapbox/streets-v12'
+        mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
+      >
+
+        <Marker
+          longitude={2.349014}
+          latitude={48.864716}
+          anchor="bottom">
+          <Pin />
         </Marker>
-    </Map>
+      </Map>
     </div>
-      
+
   )
 }
 
