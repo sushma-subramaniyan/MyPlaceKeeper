@@ -1,34 +1,38 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Map, { Marker } from 'react-map-gl';
+import * as React from 'react';
+import "./app.css";
+
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [viewState, setViewState] = React.useState({
+    longitude: -100,
+    latitude: 40,
+    zoom: 3.5
+  });
+ 
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+   <Map
+      {...viewState}
+      onMove={evt => setViewState(evt.viewState)}
+      style={{width: "100vw", height: "100vh"}}
+      mapStyle="mapbox://styles/mapbox/streets-v9"
+      mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
+    >
+      <Marker 
+      longitude={2.294694} 
+      latitude={48.858093} 
+      offsetLeft={-20} 
+      offsetTop={-10}>
+      <div>You ARE HERE</div>
+        </Marker>
+    </Map>
+    </div>
+      
   )
 }
 
