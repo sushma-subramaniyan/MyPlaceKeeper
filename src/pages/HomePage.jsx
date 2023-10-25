@@ -12,7 +12,7 @@ function HomePage() {
     const [pins, setPins] = useState([]);
     const [currentPlaceId, setCurrentPlaceId] = useState(null);
     const [newPlace, setNewPlace] = useState(null);
-    const [viewport, setViewport] = useState({
+    const [viewport2, setViewport] = useState({
       latitude: 46,
       longitude: 17,
       zoom: 2,
@@ -36,28 +36,40 @@ function HomePage() {
       fetchPins();
     }, []);
   
-    const handleMarkerClick = (id) => {
+    const handleMarkerClick = (id,lat,long) => {
       setCurrentPlaceId(id);
+      setViewport({...viewport2,latitude:lat,longitude:long})
     };
 
     const handleAddClick = (event) =>{
-      console.log(event);
-           const [long,lat]= event.lngLat;
+      console.log(event.lngLat.lng);
+      
+           const {lng,lat}= event.lngLat;
+           console.log(lng,lat)
            setNewPlace({
-            long,
+            lng,
             lat,
            });
     };
 
+    const handlemove=(evt)=>{
+      console.log(evt)
+      const zoom=evt.viewState.zoom
+      const newlat=evt.viewState.latitude
+      const newlng = evt.viewState.longitude
+      setViewport({zoom,latitude:newlat,longitude:newlng})
+    }
+
     return ( 
         <div className="App">
         <Map
-          {...viewport}               
-          onMove={(evt) => setViewport(evt.viewport)}
+          {...viewport2}               
+          onMove= {handlemove}
           style={{ height: '100vh' }}
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
-          onDoublClick={handleAddClick} 
+          onClick={handleAddClick} 
+          transitionDuration="100"
           >
 
 
@@ -70,10 +82,11 @@ function HomePage() {
 
               <RoomIcon
                 style={{
+                  fontSize: viewport2.zoom * 7 ,
                   color: p.username===currentUser ? "tomato" : "slateblue",
                   cursor: "pointer",
                 }}
-                onClick={()=>handleMarkerClick(p._id)}
+                onClick={()=>handleMarkerClick(p._id,p.lat,p.long)}
               />
             </Marker>
           ))}
@@ -87,8 +100,7 @@ function HomePage() {
                 closeButton={true}
                 closeOnClick={false}
                 onClose={() => setCurrentPlaceId(null)}
-                key={p._id}
-              >
+                            >
                 <div className="card">
                   <label>Place</label>
                   <h4 className="place">{p.title}</h4>
@@ -114,13 +126,14 @@ function HomePage() {
           {newPlace &&  (
          <Popup
    
-                longitude={newPlace.long}
+                longitude={newPlace.lng}
                 latitude={newPlace.lat}
                 anchor="top"
                 closeButton={true}
                 closeOnClick={false}
-                onClose={() => setnewPlace(null)}
-               >hello</Popup> )}
+                onClose={() => setNewPlace(null)}>
+                  
+                </Popup> )}
         </Map>
       </div>
      );
