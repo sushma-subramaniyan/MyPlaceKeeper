@@ -5,8 +5,10 @@ import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
 import { format } from 'timeago.js';
 import Register from '../components/Register';
+import { viewport } from '@popperjs/core';
 
 function HomePage() {
+  const currentUser = "john"
     const [pins, setPins] = useState([]);
     const [currentPlaceId, setCurrentPlaceId] = useState(null);
     const [viewState, setViewState] = useState({
@@ -54,8 +56,10 @@ function HomePage() {
             latitude={p.lat} 
             anchor="bottom" 
             key={p._id}>
+
               <RoomIcon 
-                onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
+              style={{fontSize : viewport.zoom *7, color : p.username === currentUser ? "tomato" : "slateblue",cursor:"pointer"}}
+                onClick={() => handleMarkerClick(p._id)}
               />
             </Marker>
           ))}
