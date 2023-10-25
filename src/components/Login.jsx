@@ -1,5 +1,4 @@
 import "../components/login.css"
-import "./Pin"
 import { useState } from "react";
 
 

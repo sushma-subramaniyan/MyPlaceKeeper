@@ -94,7 +94,6 @@ function HomePage() {
             )
           ))}
         </Map>
-        <Register/>
       </div>
      );
 }
