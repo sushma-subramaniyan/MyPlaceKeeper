@@ -5,16 +5,17 @@ import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
 import { format } from 'timeago.js';
 import Register from '../components/Register';
-import { viewport } from '@popperjs/core';
+
 
 function HomePage() {
-  const currentUser = "john"
+    const currentUser = "Sanjana"
     const [pins, setPins] = useState([]);
     const [currentPlaceId, setCurrentPlaceId] = useState(null);
-    const [viewState, setViewState] = useState({
-      longitude: 17,
+    const [newPlace, setNewPlace] = useState(null);
+    const [viewport, setViewport] = useState({
       latitude: 46,
-      zoom: 4,
+      longitude: 17,
+      zoom: 2,
     });
     const [showPopup, setShowPopup] = useState(true);
   
@@ -39,17 +40,27 @@ function HomePage() {
       setCurrentPlaceId(id);
     };
 
+    const handleAddClick = (event) =>{
+      console.log(event);
+           const [long,lat]= event.lngLat;
+           setNewPlace({
+            long,
+            lat,
+           });
+    };
+
     return ( 
         <div className="App">
         <Map
-          initialViewState={{
-            ...viewState,
-          }}
-          onMove={(evt) => setViewState(evt.viewState)}
+          {...viewport}               
+          onMove={(evt) => setViewport(evt.viewport)}
           style={{ height: '100vh' }}
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
-        >
+          onDoublClick={handleAddClick} 
+          >
+
+
           {pins.map((p) => (
             <Marker 
             longitude={p.long} 
@@ -57,9 +68,12 @@ function HomePage() {
             anchor="bottom" 
             key={p._id}>
 
-              <RoomIcon 
-              style={{fontSize : viewport.zoom *7, color : p.username === currentUser ? "tomato" : "slateblue",cursor:"pointer"}}
-                onClick={() => handleMarkerClick(p._id)}
+              <RoomIcon
+                style={{
+                  color: p.username===currentUser ? "tomato" : "slateblue",
+                  cursor: "pointer",
+                }}
+                onClick={()=>handleMarkerClick(p._id)}
               />
             </Marker>
           ))}
@@ -97,6 +111,16 @@ function HomePage() {
               </Popup>
             )
           ))}
+          {newPlace &&  (
+         <Popup
+   
+                longitude={newPlace.long}
+                latitude={newPlace.lat}
+                anchor="top"
+                closeButton={true}
+                closeOnClick={false}
+                onClose={() => setnewPlace(null)}
+               >hello</Popup> )}
         </Map>
       </div>
      );
