@@ -8,7 +8,9 @@ import Register from '../components/Register';
 
 
 function HomePage() {
-  const currentUser = "Sanjana"
+  const myStorage = window.localStorage;
+  const currentUser = 'sanjana';
+  //const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
   const [star, setStar] = useState(0);
@@ -21,6 +23,8 @@ function HomePage() {
     zoom: 2,
   });
   const [showPopup, setShowPopup] = useState(true);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -54,7 +58,7 @@ function HomePage() {
       lat,
     });
   };
-  
+
   const handlemove = (evt) => {
     console.log(evt)
     const zoom = evt.viewState.zoom
@@ -62,11 +66,12 @@ function HomePage() {
     const newlng = evt.viewState.longitude
     setViewport({ zoom, latitude: newlat, longitude: newlng })
   }
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
-      username: currentUser,
+      username:currentUser,
       title,
       desc,
       rating: star,
@@ -90,10 +95,16 @@ function HomePage() {
       setPins([...pins, data]);
       setNewPlace(null);
     }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    myStorage.removeItem("user");
+  };
+
   
 
   return (
@@ -114,7 +125,10 @@ function HomePage() {
             longitude={p.long}
             latitude={p.lat}
             anchor="bottom"
-            key={p._id}>
+            key={p._id}
+            style={{zIndex:'20'}}
+            >
+
 
             <RoomIcon
               style={{
@@ -128,7 +142,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id && showPopup && (
+          currentPlaceId === p._id &&  (
             <Popup
               longitude={p.long}
               latitude={p.lat}
@@ -144,11 +158,8 @@ function HomePage() {
                 <p className="desc">{p.desc}</p>
                 <label>Rating</label>
                 <div className='star'>
-                  <StarIcon className='star' />
-                  <StarIcon className='star' />
-                  <StarIcon className='star' />
-                  <StarIcon className='star' />
-                  <StarIcon className='star' />
+                 {Array(p.rating).fill( <StarIcon className='star' />)}
+                  
                 </div>
                 <label>Information</label>
                 <span className="username">
@@ -170,7 +181,7 @@ function HomePage() {
             onClose={() => setNewPlace(null)}>
 
             <div>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} >
                 <label>Title</label>
                 <input
                   placeholder="Enter a title"
@@ -197,6 +208,31 @@ function HomePage() {
             </div>
           </Popup>
         )}
+          {currentUser ? (
+          <button className="button logout" onClick={handleLogout}>
+            Log out
+          </button>
+        ) : (
+          <div className="buttons">
+            <button className="button login" onClick={() => setShowLogin(true)}>
+              Log in
+            </button>
+            <button
+              className="button register"
+              onClick={() => setShowRegister(true)}
+            >
+              Register
+            </button>
+          </div>
+        )}
+        {showRegister && <Register setShowRegister={setShowRegister} />}
+        {showLogin && (
+          <Login
+            setShowLogin={setShowLogin}
+            setCurrentUser={setCurrentUser}
+            myStorage={myStorage}
+          />
+        )} 
       </Map>
     </div>
   );
