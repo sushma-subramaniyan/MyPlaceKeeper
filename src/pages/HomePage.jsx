@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Map, { Marker, Popup } from 'react-map-gl';
+import {  Marker, Popup, Map } from 'react-map-gl';
 import './homePage.css';
 import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
@@ -17,10 +17,10 @@ function HomePage() {
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
-  const [viewport2, setViewport] = useState({
-    latitude: 46,
-    longitude: 17,
-    zoom: 2,
+  const [viewport, setViewport] = useState({
+    latitude: 48,
+    longitude: 2,
+    zoom: 5,
   });
   const [showPopup, setShowPopup] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
@@ -44,8 +44,9 @@ function HomePage() {
   }, []);
 
   const handleMarkerClick = (id, lat, long) => {
+    console.log(id, lat, long)
     setCurrentPlaceId(id);
-    setViewport({ ...viewport2, latitude: lat, longitude: long })
+    setViewport({ ...viewport, latitude: lat, longitude: long })
   };
 
   const handleAddClick = (event) => {
@@ -60,7 +61,7 @@ function HomePage() {
   };
 
   const handlemove = (evt) => {
-    console.log(evt)
+    // console.log(evt)
     const zoom = evt.viewState.zoom
     const newlat = evt.viewState.latitude
     const newlng = evt.viewState.longitude
@@ -78,8 +79,7 @@ function HomePage() {
       lat: newPlace.lat,
       long: newPlace.lng,
     };
-    console.log(newPin)
-  
+
     try {
       const response = await fetch("http://localhost:5005/api/pins", {
         method: "POST",
@@ -110,13 +110,14 @@ function HomePage() {
   return (
     <div className="App">
       <Map
-        {...viewport2}
+        {...viewport}
+        onContextMenu={handleAddClick}
         onMove={handlemove}
         style={{ height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
-        onClick={handleAddClick}
-        transitionDuration="100"
+        // doubleClickZoom={false}
+        // transitionDuration="5000000" its not working
       >
 
 
@@ -132,7 +133,7 @@ function HomePage() {
 
             <RoomIcon
               style={{
-                fontSize: viewport2.zoom * 7,
+                fontSize: viewport.zoom * 7,
                 color: p.username === currentUser ? "tomato" : "slateblue",
                 cursor: "pointer",
               }}
@@ -144,6 +145,7 @@ function HomePage() {
         {pins.map((p) => (
           currentPlaceId === p._id &&  (
             <Popup
+              key={p._id}
               longitude={p.long}
               latitude={p.lat}
               anchor="top"
