@@ -5,11 +5,14 @@ import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
 import { format } from 'timeago.js';
 import Register from '../components/Register';
+import { useContext } from 'react';
+import Login from '../components/Login';
+import { AuthContext } from '../contexts/AuthContext';
 
 
 function HomePage() {
+  const { user, logout } = useContext(AuthContext)
   const myStorage = window.localStorage;
-  const currentUser = 'sanjana';
   //const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
@@ -29,7 +32,7 @@ function HomePage() {
   useEffect(() => {
     const fetchPins = async () => {
       try {
-        const response = await fetch('http://localhost:5005/api/pins');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins`);
         if (response.ok) {
           const data = await response.json();
           setPins(data);
@@ -50,14 +53,13 @@ function HomePage() {
   };
 
   const handleAddClick = (event) => {
-    console.log(event.lngLat.lng);
-
-    const { lng, lat } = event.lngLat;
-    console.log(lng, lat)
-    setNewPlace({
-      lng,
-      lat,
-    });
+    if(user) {
+      const { lng, lat } = event.lngLat;
+      setNewPlace({
+        lng,
+        lat,
+      });
+    }
   };
 
   const handlemove = (evt) => {
@@ -72,7 +74,7 @@ function HomePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
-      username:currentUser,
+      username: user.username,
       title,
       desc,
       rating: star,
@@ -81,7 +83,7 @@ function HomePage() {
     };
 
     try {
-      const response = await fetch("http://localhost:5005/api/pins", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,11 +103,8 @@ function HomePage() {
   };
 
   const handleLogout = () => {
-    setCurrentUser(null);
-    myStorage.removeItem("user");
+    logout();
   };
-
-  
 
   return (
     <div className="App">
@@ -134,7 +133,7 @@ function HomePage() {
             <RoomIcon
               style={{
                 fontSize: viewport.zoom * 7,
-                color: p.username === currentUser ? "tomato" : "slateblue",
+                color: p.username === user?.username ? "tomato" : "slateblue",
                 cursor: "pointer",
               }}
               onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
@@ -210,29 +209,38 @@ function HomePage() {
             </div>
           </Popup>
         )}
-          {currentUser ? (
+          {user ? (
           <button className="button logout" onClick={handleLogout}>
             Log out
           </button>
         ) : (
           <div className="buttons">
-            <button className="button login" onClick={() => setShowLogin(true)}>
+            <button 
+              className="button login" 
+              onClick={() => {
+                setShowLogin(true)
+                setShowRegister(false)}
+              }
+            >
               Log in
             </button>
             <button
               className="button register"
-              onClick={() => setShowRegister(true)}
+              onClick={() => {
+                setShowLogin(false)
+                setShowRegister(true)}
+              }
             >
               Register
             </button>
           </div>
         )}
-        {showRegister && <Register setShowRegister={setShowRegister} />}
+        {showRegister && <Register setShowRegister={setShowRegister} setShowLogin={setShowLogin} />}
         {showLogin && (
           <Login
             setShowLogin={setShowLogin}
-            setCurrentUser={setCurrentUser}
-            myStorage={myStorage}
+            // setCurrentUser={setCurrentUser}
+            // myStorage={myStorage}
           />
         )} 
       </Map>

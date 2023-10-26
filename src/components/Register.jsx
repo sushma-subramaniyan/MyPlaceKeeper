@@ -3,8 +3,7 @@ import { useState } from "react";
 import CancelIcon from '@mui/icons-material/Cancel';
 
 
-const Register = () => {
-  const [success, setSuccess] = useState(false)
+const Register = ({setShowRegister , setShowLogin}) => {
   const [error, setError] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -29,8 +28,8 @@ const Register = () => {
         }
       );
       if (response.ok) {
-        setError(false);
-        setSuccess(true);
+        setShowRegister(false)
+        setShowLogin(true)
       } else {
         setError(true);
       }
@@ -66,11 +65,6 @@ const Register = () => {
           required />
         <button className="registerBtn">Register</button>
 
-        {success && (
-          <span className="success">
-            Successfull.You can Login Now!
-          </span>
-        )}
         {error &&
           <span className="failure">
             Something Went Wrong!!!!

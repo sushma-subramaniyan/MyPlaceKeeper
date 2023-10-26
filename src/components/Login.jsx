@@ -2,21 +2,19 @@ import "../components/login.css"
 import { useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
-import { Navigate, useNavigate } from "react-router";
 
 
-const Login = () => {
+const Login = ({setShowLogin}) => {
     
     const [error, setError] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate()
 
-    const { login, setIsLoading } = useContext(AuthContext)
+    const { login } = useContext(AuthContext)
    
     const handleSubmit =async (e)=>{
         e.preventDefault();
-        const user = {
+        const newUser = {
             username,
             password,
         };
@@ -24,7 +22,7 @@ const Login = () => {
           const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`,
           {
             method: "POST",
-            body: JSON.stringify(user),
+            body: JSON.stringify(newUser),
             headers:{
                 'Content-type':'application/json',
             },
@@ -38,7 +36,7 @@ const Login = () => {
             const parsed = await response.json()
             login(parsed.token)
             setError(false);
-            navigate('/testpage')
+            setShowLogin(false)
           }
            
         } catch (error) {

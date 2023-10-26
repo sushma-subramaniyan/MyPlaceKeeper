@@ -62,6 +62,7 @@ const AuthContextProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem("jwtToken");
+        setToken(null);
         setUser(null);
     };
 
