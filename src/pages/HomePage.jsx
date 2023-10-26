@@ -22,9 +22,10 @@ function HomePage() {
   const [newPlace, setNewPlace] = useState(null);
   const [viewport, setViewport] = useState({
     latitude: 48,
-    longitude: 2,
+    longitude: 17,
     zoom: 5,
   });
+  const [showPopupEdit, setShowPopupEdit] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -46,10 +47,41 @@ function HomePage() {
     fetchPins();
   }, []);
 
+  const handleDelete = async (placeId) => {
+    try {
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins/${placeId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.ok) {
+        console.log('deleted')
+        setPins((prevPins) => prevPins.filter((pin) => pin._id !== placeId));
+       
+        setCurrentPlaceId(null);
+      } else {
+        console.error("Error deleting pin");
+      }
+    } catch (error) {
+      console.error("Error deleting pin:", error);
+    }
+  };
+
+
   const handleMarkerClick = (id, lat, long) => {
-    console.log(id, lat, long)
-    setCurrentPlaceId(id);
-    setViewport({ ...viewport, latitude: lat, longitude: long })
+    const selectetPin = pins.filter(pin => pin._id === id)
+    if(selectetPin[0].username === user.username){
+      setShowPopupEdit(true)
+      setViewport({ ...viewport, latitude: lat, longitude: long })
+    } else {
+      console.log(id, lat, long)
+      setCurrentPlaceId(id);
+      setViewport({ ...viewport, latitude: lat, longitude: long })
+    }
+
   };
 
   const handleAddClick = (event) => {
@@ -168,12 +200,15 @@ function HomePage() {
                 </span>
               </div>
               <span className="date">{format(p.createdAt)}</span>
+              {user && p.username === user.username && (
+                <button onClick={() => handleDelete(p._id)}>Delete</button>
+              )}
+           
             </Popup>
           )
         ))}
         {newPlace && (
           <Popup
-
             longitude={newPlace.lng}
             latitude={newPlace.lat}
             anchor="top"
@@ -205,6 +240,49 @@ function HomePage() {
                 <button type="submit" className="submitButton">
                   Add Pin
                 </button>
+                {/* <button  className="deleteButton" onClick={handleDelete}>
+                  delete
+                </button> */}
+              </form>
+            </div>
+          </Popup>
+        )}
+         {showPopupEdit && (
+          <Popup
+            longitude={newPlace.lng}
+            latitude={newPlace.lat}
+            anchor="top"
+            closeButton={true}
+            closeOnClick={false}
+            onClose={() => showPopupEdit(false)}>
+
+            <div>
+              <form onSubmit={handleSubmit} >
+                <label>Title</label>
+                <input
+                  placeholder="Enter a title"
+                  autoFocus
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+                <label>Description</label>
+                <textarea
+                  placeholder="Say us something about this place."
+                  onChange={(e) => setDesc(e.target.value)}
+                />
+                <label>Rating</label>
+                <select onChange={(e) => setStar(e.target.value)}>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <button type="submit" className="submitButton">
+                  Add Pin
+                </button>
+                {/* <button  className="deleteButton" onClick={handleDelete}>
+                  delete
+                </button> */}
               </form>
             </div>
           </Popup>
