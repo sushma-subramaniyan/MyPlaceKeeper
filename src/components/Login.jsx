@@ -1,5 +1,8 @@
 import "../components/login.css"
 import { useState } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import { useContext } from "react";
+import { Navigate, useNavigate } from "react-router";
 
 
 const Login = () => {
@@ -7,6 +10,9 @@ const Login = () => {
     const [error, setError] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate()
+
+    const { login, setIsLoading } = useContext(AuthContext)
    
     const handleSubmit =async (e)=>{
         e.preventDefault();
@@ -15,8 +21,7 @@ const Login = () => {
             password,
         };
         try {
-          console.log(newUser)
-          const response = await fetch("http://localhost:5005/api/auth/login",
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`,
           {
             method: "POST",
             body: JSON.stringify(user),
@@ -25,12 +30,19 @@ const Login = () => {
             },
           }
           );
-          if(response.ok){
+          if (response.status === 400) {
+            const parsed = await response.json()
+            throw new Error(parsed.message)
+          }
+          if (response.status === 200) {
+            const parsed = await response.json()
+            login(parsed.token)
             setError(false);
+            navigate('/testpage')
           }
            
         } catch (error) {
-
+          console.log(error )
            setError(true); 
         }
     };
