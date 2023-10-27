@@ -108,6 +108,7 @@ function HomePage() {
 
   return (
     <div className="App">
+
       <Map
         {...viewport}
         onContextMenu={handleAddClick}
@@ -120,7 +121,7 @@ function HomePage() {
       >
 
 
-        {pins.map((p) => (
+        {user && pins.map((p) => (
           <Marker
             longitude={p.long}
             latitude={p.lat}
@@ -183,7 +184,7 @@ function HomePage() {
 
             <div>
               <form onSubmit={handleSubmit} >
-                <label>Title</label>
+                <label className='label'>Title</label>
                 <input
                   placeholder="Enter a title"
                   autoFocus
@@ -209,7 +210,7 @@ function HomePage() {
             </div>
           </Popup>
         )}
-          {user ? (
+        {user ? (
           <button className="button logout" onClick={handleLogout}>
             Log out
           </button>
@@ -243,6 +244,7 @@ function HomePage() {
             // myStorage={myStorage}
           />
         )} 
+
       </Map>
     </div>
   );

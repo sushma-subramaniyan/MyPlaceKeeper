@@ -1,6 +1,7 @@
 import "../components/register.css";
 import { useState } from "react";
-import CancelIcon from '@mui/icons-material/Cancel';
+import CloseIcon from '@mui/icons-material/Close';
+import RoomIcon from '@mui/icons-material/Room';
 
 
 const Register = ({setShowRegister , setShowLogin}) => {
@@ -37,18 +38,21 @@ const Register = ({setShowRegister , setShowLogin}) => {
       setError(true);
     }
   };
+  const handleClose =()=>{
+    setShowRegister(false)
+  }
 
   return (
     <div className="registerContainer">
       <div className="logo">
-        { /*/have to giv pin */}
-        LamaPin
+      <RoomIcon />
+        MyPlaceKeeper
       </div>
       <form onSubmit={handleSubmit}>
         <label>
-          <input
+          <input style={{height:'18.5px',width:'240px'}}
             value={username}
-            placeholder="usernmae"
+            placeholder="username"
             onChange={event => setUsername(event.target.value)}
             required />
         </label>
@@ -70,7 +74,7 @@ const Register = ({setShowRegister , setShowLogin}) => {
             Something Went Wrong!!!!
           </span>}
       </form>
-      <CancelIcon />
+      <CloseIcon className="registerCancel" onClick={handleClose}  />
 
     </div>
   )

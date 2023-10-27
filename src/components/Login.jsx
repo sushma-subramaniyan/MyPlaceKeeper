@@ -2,6 +2,8 @@ import "../components/login.css"
 import { useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
+import CloseIcon from '@mui/icons-material/Close';
+import RoomIcon from '@mui/icons-material/Room';
 
 
 const Login = ({setShowLogin}) => {
@@ -44,16 +46,20 @@ const Login = ({setShowLogin}) => {
            setError(true); 
         }
     };
+    const handleClose =()=>{
+      setShowLogin(false)
+    }
     
     return (
+      
      <div className="loginContainer">
         <div className="logo">
-        { /*/have to giv pin */}
-            LamaPin
+        <RoomIcon />
+            MyPlaceKeeper
         </div>
         <form onSubmit={handleSubmit}>
             <label>
-            <input value={username} placeholder="usernmae" onChange={event=>setUsername(event.target.value)} required/>
+            <input style={{height:'18.5px',width:'240px'}} value={username} placeholder="username" onChange={event=>setUsername(event.target.value)} required/>
             </label>
             <input value={password} type="password" placeholder="password" onChange={event=>setPassword(event.target.value)} required/>
             <button className="loginBtn">Login</button>
@@ -65,10 +71,11 @@ const Login = ({setShowLogin}) => {
            
             
         </form>
-        {/*<Cancel className="loginCancel" onClick={()=>setShowLogin(false)}/>
+        <CloseIcon className="loginCancel"  onClick={handleClose}/>
         
-        we have to import cancel icon*/}
+       
      </div>
+     
     )
   }
   
