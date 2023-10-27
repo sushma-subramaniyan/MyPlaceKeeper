@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {  Marker, Popup, Map } from 'react-map-gl';
+import { Marker, Popup, Map } from 'react-map-gl';
 import './homePage.css';
 import StarIcon from '@mui/icons-material/Star';
 import RoomIcon from '@mui/icons-material/Room';
@@ -20,11 +20,12 @@ function HomePage() {
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
-  const [viewport, setViewport] = useState({
+  const [viewState, setViewState] = useState({
     latitude: 48,
-    longitude: 2,
+    longitude: 17,
     zoom: 5,
   });
+  const [showPopupEdit, setShowPopupEdit] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -46,34 +47,70 @@ function HomePage() {
     fetchPins();
   }, []);
 
-  const handleMarkerClick = (id, lat, long) => {
-    console.log(id, lat, long)
-    setCurrentPlaceId(id);
-    setViewport({ ...viewport, latitude: lat, longitude: long })
+  const handleDelete = async (placeId) => {
+    try {
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins/${placeId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setNewPlace(null);
+        setTitle('')
+        setDesc('')
+        setStar(1)
+        setPins((prevPins) => prevPins.filter((pin) => pin._id !== placeId));
+      } else {
+        console.log("Error deleting pin");
+      }
+    } catch (error) {
+      console.log("Error deleting pin:", error);
+    }
+  };
+
+
+  const handleMarkerClick = (id, lat, lng) => {
+    console.log(user)
+    const selectedPin = pins.find(pin => pin._id === id)
+    console.log(selectedPin)
+    if (selectedPin.username === user?.username) {
+      setTitle(selectedPin.title)
+      setDesc(selectedPin.desc)
+      setStar(selectedPin.star)
+      setNewPlace({
+        lng,
+        lat,
+        edit: true,
+        id,
+      });
+
+    } else {
+      console.log(id, lat, lng)
+      setCurrentPlaceId(id);
+      setViewState({ ...viewState, latitude: lat, longitude: lng })
+    }
+
   };
 
   const handleAddClick = (event) => {
-    if(user) {
+    if (user) {
       const { lng, lat } = event.lngLat;
       setNewPlace({
         lng,
         lat,
+        edit: false,
       });
     }
   };
 
-  const handlemove = (evt) => {
-    // console.log(evt)
-    const zoom = evt.viewState.zoom
-    const newlat = evt.viewState.latitude
-    const newlng = evt.viewState.longitude
-    setViewport({ zoom, latitude: newlat, longitude: newlng })
-  }
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newPin = {
+     const method = newPlace.edit ? 'PUT' : 'POST'
+     const pindId = newPlace.edit ? '/' + newPlace.id : '';
+        const newPin = {
       username: user.username,
       title,
       desc,
@@ -82,41 +119,62 @@ function HomePage() {
       long: newPlace.lng,
     };
 
+    console.log(pindId);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins`, {
-        method: "POST",
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins${pindId}`, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newPin),
       });
-  
+
       if (response.ok) {
-  
-      const data = await response.json();
-      setPins([...pins, data]);
-      setNewPlace(null);
-    }
+        const data = await response.json();
+        if (newPlace.edit) {
+          
+          setPins((prevPins) =>
+            prevPins.map((pin) => (pin._id === newPlace.id ? data : pin))
+          );
+        } else {
+        
+          setPins([...pins, data]);
+        }
+        setTitle('')
+        setDesc('')
+        setStar(1)
+        setNewPlace(null);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleLogout = () => {
+    setTitle('')
+    setDesc('')
+    setStar(1)
+    setNewPlace(null);
+    setCurrentPlaceId(null)
     logout();
   };
+
+
+
 
   return (
     <div className="App">
       <Map
-        {...viewport}
-        onContextMenu={handleAddClick}
-        onMove={handlemove}
+        {...viewState}
+        // onContextMenu={handleAddClick}
+        onMove={evt => setViewState(evt.viewState)}
+        doubleClickZoom={false}
         style={{ height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
-        // doubleClickZoom={false}
-        // transitionDuration="5000000" its not working
+        onDblClick={handleAddClick}
+      // transitionDuration="5000000" its not working
       >
 
 
@@ -126,13 +184,13 @@ function HomePage() {
             latitude={p.lat}
             anchor="bottom"
             key={p._id}
-            style={{zIndex:'20'}}
-            >
+            style={{ zIndex: '20' }}
+          >
 
 
             <RoomIcon 
               style={{
-                fontSize: viewport.zoom * 7,
+                fontSize: viewState.zoom * 7,
                 color: p.username === user?.username ? "tomato" : "slateblue",
                 cursor: "pointer",
               }}
@@ -142,7 +200,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id &&  (
+          currentPlaceId === p._id && (
             <Popup
               key={p._id}
               longitude={p.long}
@@ -161,8 +219,10 @@ function HomePage() {
                 <p className="desc">{p.desc}</p>
                 <label>Rating</label>
                 <div className='star'>
-                 {Array(p.rating).fill( <StarIcon className='star' />)}
-                  
+                  {Array(p.rating).fill(0).map((_, index) => (
+                    <StarIcon key={index} className='star' />
+                  ))}
+
                 </div>
                 <label>Information</label>
                 <span className="username">
@@ -175,7 +235,6 @@ function HomePage() {
         ))}
         {newPlace && (
           <Popup
-
             longitude={newPlace.lng}
             latitude={newPlace.lat}
             anchor="top"
@@ -189,41 +248,55 @@ function HomePage() {
                 <input
                   placeholder="Enter a title"
                   autoFocus
+                  value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
                 <label>Description</label>
                 <textarea
                   placeholder="Say us something about this place."
+                  value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                 />
                 <label>Rating</label>
-                <select onChange={(e) => setStar(e.target.value)}>
+                <select value={star} defaultValue={star} onChange={(e) => setStar(e.target.value)}>
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
-                <button type="submit" className="submitButton">
-                  Add Pin
-                </button>
+                {newPlace.edit ? (
+                  <>
+                    <button type="submit" className="submitButton">
+                      Update Pin
+                    </button>
+                    <button type="button" onClick={() => handleDelete(newPlace.id)} className="submitButton">
+                      Delete Pin
+                    </button>
+                  </>
+                ) : (
+                  <button type="submit" className="submitButton">
+                    Add Pin
+                  </button>
+                )}
               </form>
+
             </div>
           </Popup>
         )}
-        
-        
+
         {user ? (
           <button className="button logout" onClick={handleLogout}>
             Log out
           </button>
         ) : (
           <div className="buttons">
-            <button 
-              className="button login" 
+            <button
+              className="button login"
               onClick={() => {
                 setShowLogin(true)
-                setShowRegister(false)}
+                setShowRegister(false)
+              }
               }
             >
               Log in
@@ -232,7 +305,8 @@ function HomePage() {
               className="button register"
               onClick={() => {
                 setShowLogin(false)
-                setShowRegister(true)}
+                setShowRegister(true)
+              }
               }
             >
               Register
@@ -243,14 +317,12 @@ function HomePage() {
         {showLogin && (
           <Login
             setShowLogin={setShowLogin}
-            // setCurrentUser={setCurrentUser}
-            // myStorage={myStorage}
+          // setCurrentUser={setCurrentUser}
+          // myStorage={myStorage}
           />
         )} 
-        
-         </Map>
-     </div>
-    
+      </Map>
+    </div>
   );
 }
 
