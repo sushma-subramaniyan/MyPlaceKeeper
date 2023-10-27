@@ -6,6 +6,9 @@
   justify-content: space-around;
   
 }
+.popup{
+  z-index: 80;
+}
 
 .label {
   width: max-content;

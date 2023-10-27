@@ -151,6 +151,8 @@ function HomePage() {
               closeButton={true}
               closeOnClick={false}
               onClose={() => setCurrentPlaceId(null)}
+              className="popup"
+              
             >
               <div className="card">
                 <label>Place</label>
