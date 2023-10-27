@@ -20,7 +20,7 @@ function HomePage() {
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
-  const [viewport, setViewport] = useState({
+  const [viewState, setViewState] = useState({
     latitude: 48,
     longitude: 17,
     zoom: 5,
@@ -90,7 +90,7 @@ function HomePage() {
     } else {
       console.log(id, lat, lng)
       setCurrentPlaceId(id);
-      setViewport({ ...viewport, latitude: lat, longitude: lng })
+      setViewState({ ...viewState, latitude: lat, longitude: lng })
     }
 
   };
@@ -105,15 +105,6 @@ function HomePage() {
       });
     }
   };
-
-  const handlemove = (evt) => {
-    // console.log(evt)
-    const zoom = evt.viewState.zoom
-    const newlat = evt.viewState.latitude
-    const newlng = evt.viewState.longitude
-    setViewport({ zoom, latitude: newlat, longitude: newlng })
-  }
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,13 +166,14 @@ function HomePage() {
   return (
     <div className="App">
       <Map
-        {...viewport}
-        onContextMenu={handleAddClick}
-        onMove={handlemove}
+        {...viewState}
+        // onContextMenu={handleAddClick}
+        onMove={evt => setViewState(evt.viewState)}
+        doubleClickZoom={false}
         style={{ height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
-      // doubleClickZoom={false}
+        onDblClick={handleAddClick}
       // transitionDuration="5000000" its not working
       >
 
@@ -198,7 +190,7 @@ function HomePage() {
 
             <RoomIcon
               style={{
-                fontSize: viewport.zoom * 7,
+                fontSize: viewState.zoom * 7,
                 color: p.username === user?.username ? "tomato" : "slateblue",
                 cursor: "pointer",
               }}
