@@ -108,7 +108,6 @@ function HomePage() {
 
   return (
     <div className="App">
-
       <Map
         {...viewport}
         onContextMenu={handleAddClick}
@@ -121,7 +120,7 @@ function HomePage() {
       >
 
 
-        {user && pins.map((p) => (
+        { pins.map((p) => (
           <Marker
             longitude={p.long}
             latitude={p.lat}
@@ -131,7 +130,7 @@ function HomePage() {
             >
 
 
-            <RoomIcon
+            <RoomIcon 
               style={{
                 fontSize: viewport.zoom * 7,
                 color: p.username === user?.username ? "tomato" : "slateblue",
@@ -210,6 +209,8 @@ function HomePage() {
             </div>
           </Popup>
         )}
+        
+        
         {user ? (
           <button className="button logout" onClick={handleLogout}>
             Log out
@@ -244,9 +245,10 @@ function HomePage() {
             // myStorage={myStorage}
           />
         )} 
-
-      </Map>
-    </div>
+        
+         </Map>
+     </div>
+    
   );
 }
 
