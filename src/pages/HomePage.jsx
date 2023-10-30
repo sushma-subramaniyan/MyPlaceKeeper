@@ -168,7 +168,6 @@ function HomePage() {
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
-    setIsLoggedIn(false);
   };
 
 
