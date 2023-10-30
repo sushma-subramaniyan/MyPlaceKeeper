@@ -7,7 +7,9 @@ import { format } from 'timeago.js';
 import Register from '../components/Register';
 import { useContext } from 'react';
 import Login from '../components/Login';
+import Instructions from '../components/Instructions'
 import { AuthContext } from '../contexts/AuthContext';
+
 
 
 function HomePage() {
@@ -29,7 +31,7 @@ function HomePage() {
   const [showPopup, setShowPopup] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-
+   const [isLoggedIn,setIsLoggedIn] = useState(false);
   useEffect(() => {
     const fetchPins = async () => {
       try {
@@ -89,7 +91,7 @@ function HomePage() {
 
     } else {
       console.log(id, lat, lng)
-      setCurrentPlaceId(id);
+    setCurrentPlaceId(id);
       setViewState({ ...viewState, latitude: lat, longitude: lng })
     }
 
@@ -110,7 +112,7 @@ function HomePage() {
     e.preventDefault();
      const method = newPlace.edit ? 'PUT' : 'POST'
      const pindId = newPlace.edit ? '/' + newPlace.id : '';
-        const newPin = {
+    const newPin = {
       username: user.username,
       title,
       desc,
@@ -129,9 +131,9 @@ function HomePage() {
         },
         body: JSON.stringify(newPin),
       });
-
+  
       if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
         if (newPlace.edit) {
           
           setPins((prevPins) =>
@@ -139,13 +141,13 @@ function HomePage() {
           );
         } else {
         
-          setPins([...pins, data]);
+      setPins([...pins, data]);
         }
         setTitle('')
         setDesc('')
         setStar(1)
-        setNewPlace(null);
-      }
+      setNewPlace(null);
+    }
     } catch (error) {
       console.log(error);
     }
@@ -158,9 +160,12 @@ function HomePage() {
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
+    setIsLoggedIn(false);
   };
 
-
+ const handleLogin = () =>{
+  setIsLoggedIn(true);
+ }
 
 
   return (
@@ -174,7 +179,7 @@ function HomePage() {
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
         onDblClick={handleAddClick}
-      // transitionDuration="5000000" its not working
+        // transitionDuration="5000000" its not working
       >
 
 
@@ -185,14 +190,15 @@ function HomePage() {
             anchor="bottom"
             key={p._id}
             style={{ zIndex: '20' }}
-          >
+            >
 
 
-            <RoomIcon 
+            <RoomIcon
               style={{
                 fontSize: viewState.zoom * 7,
                 color: p.username === user?.username ? "tomato" : "slateblue",
                 cursor: "pointer",
+                
               }}
               onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
             />
@@ -222,7 +228,7 @@ function HomePage() {
                   {Array(p.rating).fill(0).map((_, index) => (
                     <StarIcon key={index} className='star' />
                   ))}
-
+                  
                 </div>
                 <label>Information</label>
                 <span className="username">
@@ -242,8 +248,8 @@ function HomePage() {
             closeOnClick={false}
             onClose={() => setNewPlace(null)}>
 
-            <div>
-              <form onSubmit={handleSubmit} >
+            <div id='formId'>
+              <form onSubmit={handleSubmit} className='form'  >
                 <label className='label'>Title</label>
                 <input
                   placeholder="Enter a title"
@@ -275,24 +281,29 @@ function HomePage() {
                     </button>
                   </>
                 ) : (
-                  <button type="submit" className="submitButton">
-                    Add Pin
-                  </button>
+                <button type="submit" className="submitButton">
+                  Add Pin
+                </button>
                 )}
               </form>
 
             </div>
-          </Popup>
+            
+          </Popup >
         )}
-
+        
         {user ? (
+          <div>
           <button className="button logout" onClick={handleLogout}>
             Log out
           </button>
+          <Instructions/>
+          </div>
+          
         ) : (
           <div className="buttons">
-            <button
-              className="button login"
+            <button 
+              className="button login" 
               onClick={() => {
                 setShowLogin(true)
                 setShowRegister(false)
@@ -317,12 +328,12 @@ function HomePage() {
         {showLogin && (
           <Login
             setShowLogin={setShowLogin}
-          // setCurrentUser={setCurrentUser}
-          // myStorage={myStorage}
+            // setCurrentUser={setCurrentUser}
+            // myStorage={myStorage}
           />
         )} 
-      </Map>
-    </div>
+         </Map>
+     </div>
   );
 }
 
