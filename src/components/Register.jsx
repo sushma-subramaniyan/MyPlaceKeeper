@@ -2,6 +2,7 @@ import "../components/register.css";
 import { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import RoomIcon from '@mui/icons-material/Room';
+import { Backdrop, CircularProgress } from "@mui/material";
 
 
 const Register = ({setShowRegister , setShowLogin}) => {
@@ -9,9 +10,12 @@ const Register = ({setShowRegister , setShowLogin}) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setOpenBackdrop(true);
     const newUser = {
       username,
       email,
@@ -30,14 +34,17 @@ const Register = ({setShowRegister , setShowLogin}) => {
       );
       if (response.ok) {
         setShowRegister(false)
+        setOpenBackdrop(false)
         setShowLogin(true)
       } else {
         setError(true);
       }
     } catch (error) {
+      setOpenBackdrop(false);
       setError(true);
     }
   };
+
   const handleClose =()=>{
     setShowRegister(false)
   }
@@ -76,6 +83,13 @@ const Register = ({setShowRegister , setShowLogin}) => {
       </form>
       <CloseIcon className="registerCancel" onClick={handleClose}  />
 
+      <CloseIcon className="loginCancel" onClick={handleClose} />
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   )
 }
