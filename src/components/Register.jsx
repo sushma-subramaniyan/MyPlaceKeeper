@@ -5,20 +5,20 @@ import RoomIcon from '@mui/icons-material/Room';
 import { Backdrop, CircularProgress } from "@mui/material";
 
 
-const Register = ({setShowRegister , setShowLogin}) => {
-  const [error, setError] = useState(false);
+const Register = ({ setShowRegister, setShowLogin, setOpenSnakbar }) => {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
-
+  const resetForm = () => {
+    setUsername("")
+    setPassword("")
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     setOpenBackdrop(true);
     const newUser = {
       username,
-      email,
       password,
     };
     try {
@@ -34,41 +34,40 @@ const Register = ({setShowRegister , setShowLogin}) => {
       );
       if (response.ok) {
         setShowRegister(false)
-        setOpenBackdrop(false)
+        setOpenBackdrop(false);
+        setOpenSnakbar({ open: true, message: 'User created successfully', severity: 'success' })
         setShowLogin(true)
       } else {
+        const parsed = await response.json()
         setOpenBackdrop(false);
-        setError(true);
+        setOpenSnakbar({ open: true, message: parsed.message, severity: 'error' })
+        resetForm()
       }
     } catch (error) {
       setOpenBackdrop(false);
-      setError(true);
+      setOpenSnakbar({ open: true, message: error.message, severity: 'error' })
+      resetForm()
     }
   };
 
-  const handleClose =()=>{
+  const handleClose = () => {
     setShowRegister(false)
   }
 
   return (
     <div className="registerContainer">
       <div className="logo">
-      <RoomIcon />
+        <RoomIcon />
         MyPlaceKeeper
       </div>
       <form onSubmit={handleSubmit}>
         <label>
-          <input style={{height:'18.5px',width:'240px'}}
+          <input style={{ height: '18.5px', width: '240px' }}
             value={username}
             placeholder="username"
             onChange={event => setUsername(event.target.value)}
             required />
         </label>
-        <input
-          value={email}
-          placeholder="email"
-          onChange={event => setEmail(event.target.value)}
-          required />
         <input
           value={password}
           type="password"
@@ -76,21 +75,18 @@ const Register = ({setShowRegister , setShowLogin}) => {
           onChange={event => setPassword(event.target.value)}
           required />
         <button className="registerBtn">Register</button>
-
-        {error &&
-          <span className="failure">
-            Something Went Wrong!!!!
-          </span>}
       </form>
-      <CloseIcon className="registerCancel" onClick={handleClose}  />
+      <CloseIcon className="registerCancel" onClick={handleClose} />
 
       <CloseIcon className="loginCancel" onClick={handleClose} />
+
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackdrop}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+
     </div>
   )
 }
