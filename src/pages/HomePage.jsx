@@ -36,7 +36,10 @@ function HomePage() {
     severity: 'success', // 'error' | 'warning' | 'info' | 'success'
   }
   )
-  const [showInstruction, setShowInstruction] = useState(false);
+  const [showInstruction, setShowInstruction] = useState(false);  const [selectedPopupId, setSelectedPopupId] = useState(null);
+  const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
+  const [loginOrRegisterClicked, setLoginOrRegisterClicked] = useState(false);
+
   useEffect(() => {
     const fetchPins = async () => {
       try {
@@ -97,7 +100,9 @@ function HomePage() {
     } else {
       console.log(id, lat, lng)
       setCurrentPlaceId(id);
+      setSelectedPopupId(id);
       setViewState({ ...viewState, latitude: lat, longitude: lng })
+      setShowNewPlacePopup(false);
     }
 
   };
@@ -110,6 +115,8 @@ function HomePage() {
         lat,
         edit: false,
       });
+      setShowNewPlacePopup (true);
+      setCurrentPlaceId(null);
     }
   };
 
@@ -168,6 +175,8 @@ function HomePage() {
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
+    setShowNewPlacePopup(false);
+    setLoginOrRegisterClicked(true); 
   };
 
 
@@ -185,9 +194,8 @@ function HomePage() {
         onDblClick={handleAddClick}
       // transitionDuration="5000000" its not working
       >
-
-
-        {pins.map((p) => (
+ 
+        { pins.map((p) => (
           <Marker
             longitude={p.long}
             latitude={p.lat}
@@ -210,7 +218,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id && (
+          currentPlaceId === p._id && selectedPopupId === p._id && (
             <Popup
               key={p._id}
               longitude={p.long}
@@ -222,28 +230,31 @@ function HomePage() {
               className="popup"
 
             >
-              <div className="card">
-                <label>Place</label>
-                <h4 className="place">{p.title}</h4>
-                <label>Review</label>
+              <div>
+               <div className='card'>
+                <label className='labelplace'>Place</label>
+                <p className="place">{p.title}</p>
+                <label className='labelReview'>Review</label>
                 <p className="desc">{p.desc}</p>
-                <label>Rating</label>
+                <label className='labelRating'>Rating</label>
+             
                 <div className='star'>
                   {Array(p.rating).fill(0).map((_, index) => (
                     <StarIcon key={index} className='star' />
                   ))}
 
                 </div>
-                <label>Information</label>
+                <label className='labelInfo'>Created By</label>
                 <span className="username">
                   {p.username}
                 </span>
+                <span className="date">{format(p.createdAt)}</span>
               </div>
-              <span className="date">{format(p.createdAt)}</span>
+           </div>
             </Popup>
           )
         ))}
-        {newPlace && (
+        {showNewPlacePopup && newPlace && (
           <Popup
             longitude={newPlace.lng}
             latitude={newPlace.lat}
@@ -252,22 +263,22 @@ function HomePage() {
             closeOnClick={false}
             onClose={() => setNewPlace(null)}>
 
-            <div id='formId'>
-              <form onSubmit={handleSubmit} className='form'  >
-                <label className='label'>Title</label>
+            <div>
+                <form onSubmit={handleSubmit} className='form'>
+                <label className='title'>Title</label>
                 <input
                   placeholder="Enter a title"
                   autoFocus
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-                <label>Description</label>
+                <label className='Description'>Description</label>
                 <textarea
                   placeholder="Say us something about this place."
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                 />
-                <label>Rating</label>
+                <label className='newRating'>Rating</label>
                 <select value={star} defaultValue={star} onChange={(e) => setStar(e.target.value)}>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -303,8 +314,12 @@ function HomePage() {
             <button
               className="button login"
               onClick={() => {
+          
                 setShowLogin(true)
                 setShowRegister(false)
+
+                setShowNewPlacePopup(false); 
+                setCurrentPlaceId(null);
               }
               }
             >
@@ -313,6 +328,8 @@ function HomePage() {
             <button
               className="button register"
               onClick={() => {
+                setShowNewPlacePopup(false); 
+                setCurrentPlaceId(null);
                 setShowLogin(false)
                 setShowRegister(true)
               }

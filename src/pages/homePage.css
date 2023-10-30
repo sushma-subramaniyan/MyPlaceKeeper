@@ -1,25 +1,87 @@
+/*.....mapboxgl.....*/
+.mapboxgl-popup-content {
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 200px;
+  text-align: left;
+  font-size: 16px;
+   color: #333;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.mapboxgl-popup-content:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mapboxgl-popup-content h4 {
+  font-size: 20px;
+  margin: 0 0 10px;
+}
+
+.mapboxgl-popup-content p {
+  margin: 0 0 10px;
+}
+
+.mapboxgl-popup-content a {
+  text-decoration: none;
+  color: #0077cc;
+}
+
+.mapboxgl-popup-content a:hover {
+  text-decoration: underline;
+  color: #005299;
+}
+
+
+.mapboxgl-popup-content .close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 24px; 
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+
+/* Card Component Styling */
 .card {
-  width: 250px;
-  height: 250px;
+  width: 180px;
+  height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  
 }
-.popup{
+
+.popup {
   z-index: 80;
 }
 
-.label {
-  width: max-content;
-  color: tomato;
-  font-size: 13px;
-  border-bottom: 0.5px solid tomato;
-  margin: 3px 0;
+.labelplace,
+.labelReview,
+.labelRating,
+.labelInfo {
+  font-size: medium;
+  color: blue;
+  cursor: pointer;
+  transition: text-decoration 0.3s, color 0.3s;
 }
 
-.desc {
-  font-size: 14px;
+.labelplace:hover,
+.labelReview:hover,
+.labelRating:hover,
+.labelInfo:hover {
+  text-decoration-line: underline;
+  color: darkblue;
+}
+
+.date,
+.desc,
+.username {
+  font-size: 15px;
 }
 
 .star {
@@ -41,20 +103,47 @@
   flex-direction: column;
   justify-content: space-between;
   color: rgb(88, 87, 87);
-  
+  padding: 10px;
+  /* background-color: #f9f9f9; */
 }
 
 input {
   border: none;
-  border-bottom: 1px solid gray;
+
 }
 
 input::placeholder,
 textarea::placeholder {
   font-size: 12px;
-  color: rgb(185, 184, 184);
+  /* color: rgb(185, 184, 184); */
+}
+.title , .Description{
+  text-decoration-line: underline;
+  color: blue;
 }
 
+.newRating {
+  font-size: 16px;
+  color: #333;
+  margin-top: 10px;
+  color: blue;
+  text-decoration-line: underline;
+  margin-top: 10px;
+}
+
+.newRating select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  font-size: 14px;
+  
+}
+
+.newRating select::placeholder {
+  color: #999;
+}
 input:focus,
 textarea:focus,
 select:focus {
@@ -110,4 +199,3 @@ textarea {
 .mapboxgl-popup-close-button{
   font-size: 25px;
 }
-
