@@ -8,6 +8,8 @@ import Register from '../components/Register';
 import { useContext } from 'react';
 import Login from '../components/Login';
 import { AuthContext } from '../contexts/AuthContext';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 
 function HomePage() {
@@ -25,10 +27,14 @@ function HomePage() {
     longitude: 17,
     zoom: 5,
   });
-  const [showPopupEdit, setShowPopupEdit] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [openSnakbar, setOpenSnakbar] = useState({
+    open:false,
+    message: '',
+    severity: 'success', // 'error' | 'warning' | 'info' | 'success'
+  }
+  )
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -108,9 +114,9 @@ function HomePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-     const method = newPlace.edit ? 'PUT' : 'POST'
-     const pindId = newPlace.edit ? '/' + newPlace.id : '';
-        const newPin = {
+    const method = newPlace.edit ? 'PUT' : 'POST'
+    const pindId = newPlace.edit ? '/' + newPlace.id : '';
+    const newPin = {
       username: user.username,
       title,
       desc,
@@ -121,7 +127,7 @@ function HomePage() {
 
     console.log(pindId);
     try {
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins${pindId}`, {
         method: method,
         headers: {
@@ -133,12 +139,12 @@ function HomePage() {
       if (response.ok) {
         const data = await response.json();
         if (newPlace.edit) {
-          
+
           setPins((prevPins) =>
             prevPins.map((pin) => (pin._id === newPlace.id ? data : pin))
           );
         } else {
-        
+
           setPins([...pins, data]);
         }
         setTitle('')
@@ -178,7 +184,7 @@ function HomePage() {
       >
 
 
-        { pins.map((p) => (
+        {pins.map((p) => (
           <Marker
             longitude={p.long}
             latitude={p.lat}
@@ -188,7 +194,7 @@ function HomePage() {
           >
 
 
-            <RoomIcon 
+            <RoomIcon
               style={{
                 fontSize: viewState.zoom * 7,
                 color: p.username === user?.username ? "tomato" : "slateblue",
@@ -210,7 +216,7 @@ function HomePage() {
               closeOnClick={false}
               onClose={() => setCurrentPlaceId(null)}
               className="popup"
-              
+
             >
               <div className="card">
                 <label>Place</label>
@@ -313,14 +319,30 @@ function HomePage() {
             </button>
           </div>
         )}
-        {showRegister && <Register setShowRegister={setShowRegister} setShowLogin={setShowLogin} />}
-        {showLogin && (
-          <Login
-            setShowLogin={setShowLogin}
-          // setCurrentUser={setCurrentUser}
-          // myStorage={myStorage}
+        {showRegister && 
+          <Register 
+            setShowRegister={setShowRegister} 
+            setShowLogin={setShowLogin} 
+            setOpenSnakbar={setOpenSnakbar} 
+          />}
+
+        {showLogin && 
+          <Login 
+            setShowLogin={setShowLogin} 
+            setOpenSnakbar={setOpenSnakbar} 
           />
-        )} 
+        }
+
+        <Snackbar 
+          open={openSnakbar.open} 
+          autoHideDuration={3000}
+          onClose={() => setOpenSnakbar({open: false, message: ''})}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+          <MuiAlert elevation={6} variant="filled" severity={openSnakbar.severity} sx={{ width: '100%' }}>
+            {openSnakbar.message}
+          </MuiAlert>
+        </Snackbar>
       </Map>
     </div>
   );

@@ -7,9 +7,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import { Backdrop, CircularProgress } from "@mui/material";
 
 
-const Login = ({ setShowLogin }) => {
-
-  const [error, setError] = useState(false);
+const Login = ({ setShowLogin , setOpenSnakbar}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -34,24 +32,26 @@ const Login = ({ setShowLogin }) => {
           },
         }
       );
-      if (response.status === 400) {
-        const parsed = await response.json()
-        throw new Error(parsed.message)
-      }
+
       if (response.status === 200) {
         const parsed = await response.json()
         login(parsed.token)
-        setError(false);
         setOpenBackdrop(false)
         setShowLogin(false)
+        setOpenSnakbar({ open: true, message: 'Logged in successfully', severity: 'success' })
+      } else {
+        const parsed = await response.json()
+        setOpenBackdrop(false)
+        setOpenSnakbar({ open: true, message: parsed.message, severity: 'error' })
       }
 
     } catch (error) {
       console.log(error)
       setOpenBackdrop(false)
-      setError(true);
+      setOpenSnakbar({ open: true, message: 'Something went wrong', severity: 'error' })
     }
   };
+
   const handleClose = () => {
     setShowLogin(false)
   }
@@ -69,13 +69,6 @@ const Login = ({ setShowLogin }) => {
         </label>
         <input value={password} type="password" placeholder="password" onChange={event => setPassword(event.target.value)} required />
         <button className="loginBtn">Login</button>
-
-        {error &&
-          <span className="failure">
-            Something Went Wrong!!!!
-          </span>}
-
-
       </form>
       <CloseIcon className="loginCancel" onClick={handleClose} />
       <Backdrop
