@@ -256,6 +256,7 @@ function HomePage() {
         ))}
         {showNewPlacePopup && newPlace && (
           <Popup
+            className='popup'
             longitude={newPlace.lng}
             latitude={newPlace.lat}
             anchor="top"
