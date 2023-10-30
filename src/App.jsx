@@ -5,12 +5,14 @@ import TestPage from './pages/TestPage';
 import Register from './components/Register';
 import Login from './components/Login';
 import PrivateRoute from './components/PrivateRoute';
+import Instructions from './components/Instructions';
 
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/Instructions" element={<Instructions />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path='/testpage' element={

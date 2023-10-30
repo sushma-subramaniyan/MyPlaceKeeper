@@ -34,7 +34,7 @@
   font-size: 12px;
 }
 
-form {
+.form {
   width: 220px;
   height: 250px;
   display: flex;
@@ -107,3 +107,7 @@ textarea {
 .register{
   background-color: slateblue;
 }
+.mapboxgl-popup-close-button{
+  font-size: 25px;
+}
+

@@ -7,6 +7,7 @@ import { format } from 'timeago.js';
 import Register from '../components/Register';
 import { useContext } from 'react';
 import Login from '../components/Login';
+import Instructions from '../components/Instructions'
 import { AuthContext } from '../contexts/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -35,7 +36,7 @@ function HomePage() {
     severity: 'success', // 'error' | 'warning' | 'info' | 'success'
   }
   )
-
+  const [showInstruction, setShowInstruction] = useState(false);
   useEffect(() => {
     const fetchPins = async () => {
       try {
@@ -128,6 +129,7 @@ function HomePage() {
     console.log(pindId);
     try {
 
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins${pindId}`, {
         method: method,
         headers: {
@@ -140,10 +142,12 @@ function HomePage() {
         const data = await response.json();
         if (newPlace.edit) {
 
+
           setPins((prevPins) =>
             prevPins.map((pin) => (pin._id === newPlace.id ? data : pin))
           );
         } else {
+
 
           setPins([...pins, data]);
         }
@@ -164,8 +168,8 @@ function HomePage() {
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
+    setIsLoggedIn(false);
   };
-
 
 
 
@@ -199,6 +203,7 @@ function HomePage() {
                 fontSize: viewState.zoom * 7,
                 color: p.username === user?.username ? "tomato" : "slateblue",
                 cursor: "pointer",
+
               }}
               onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
             />
@@ -248,8 +253,8 @@ function HomePage() {
             closeOnClick={false}
             onClose={() => setNewPlace(null)}>
 
-            <div>
-              <form onSubmit={handleSubmit} >
+            <div id='formId'>
+              <form onSubmit={handleSubmit} className='form'  >
                 <label className='label'>Title</label>
                 <input
                   placeholder="Enter a title"
@@ -286,9 +291,8 @@ function HomePage() {
                   </button>
                 )}
               </form>
-
             </div>
-          </Popup>
+          </Popup >
         )}
 
         {user ? (
@@ -322,7 +326,7 @@ function HomePage() {
         {showRegister && 
           <Register 
             setShowRegister={setShowRegister} 
-            setShowLogin={setShowLogin} 
+            setShowInstruction={setShowInstruction}
             setOpenSnakbar={setOpenSnakbar} 
           />}
 
@@ -343,6 +347,7 @@ function HomePage() {
             {openSnakbar.message}
           </MuiAlert>
         </Snackbar>
+        {showInstruction && <Instructions setShowLogin={setShowLogin} setShowInstruction={setShowInstruction}/>}
       </Map>
     </div>
   );
