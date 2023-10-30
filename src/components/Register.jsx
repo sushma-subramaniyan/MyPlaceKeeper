@@ -37,6 +37,7 @@ const Register = ({setShowRegister , setShowLogin}) => {
         setOpenBackdrop(false)
         setShowLogin(true)
       } else {
+        setOpenBackdrop(false);
         setError(true);
       }
     } catch (error) {
