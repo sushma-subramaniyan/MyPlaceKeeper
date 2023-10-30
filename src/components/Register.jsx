@@ -8,10 +8,12 @@ import { Backdrop, CircularProgress } from "@mui/material";
 const Register = ({ setShowRegister, setShowLogin, setOpenSnakbar }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
   const resetForm = () => {
     setUsername("")
+    setEmail("")
     setPassword("")
   }
   const handleSubmit = async (e) => {
@@ -19,6 +21,7 @@ const Register = ({ setShowRegister, setShowLogin, setOpenSnakbar }) => {
     setOpenBackdrop(true);
     const newUser = {
       username,
+      email,
       password,
     };
     try {
@@ -68,6 +71,11 @@ const Register = ({ setShowRegister, setShowLogin, setOpenSnakbar }) => {
             onChange={event => setUsername(event.target.value)}
             required />
         </label>
+        <input
+          value={email}
+          placeholder="email"
+          onChange={event => setEmail(event.target.value)}
+          required />
         <input
           value={password}
           type="password"
