@@ -220,24 +220,27 @@ function HomePage() {
               className="popup"
               
             >
-              <div className="card">
-                <label>Place</label>
-                <h4 className="place">{p.title}</h4>
-                <label>Review</label>
+              <div>
+               <div className='card'>
+                <label className='labelplace'>Place</label>
+                <p className="place">{p.title}</p>
+                <label className='labelReview'>Review</label>
                 <p className="desc">{p.desc}</p>
-                <label>Rating</label>
+                <label className='labelRating'>Rating</label>
+             
                 <div className='star'>
                   {Array(p.rating).fill(0).map((_, index) => (
                     <StarIcon key={index} className='star' />
                   ))}
 
                 </div>
-                <label>Information</label>
+                <label className='labelInfo'>Created By</label>
                 <span className="username">
                   {p.username}
                 </span>
+                <span className="date">{format(p.createdAt)}</span>
               </div>
-              <span className="date">{format(p.createdAt)}</span>
+           </div>
             </Popup>
           )
         ))}
@@ -251,21 +254,21 @@ function HomePage() {
             onClose={() => setNewPlace(null)}>
 
             <div>
-              <form onSubmit={handleSubmit} >
-                <label className='label'>Title</label>
+                <form onSubmit={handleSubmit} className='form'>
+                <label className='title'>Title</label>
                 <input
                   placeholder="Enter a title"
                   autoFocus
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-                <label>Description</label>
+                <label className='Description'>Description</label>
                 <textarea
                   placeholder="Say us something about this place."
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                 />
-                <label>Rating</label>
+                <label className='newRating'>Rating</label>
                 <select value={star} defaultValue={star} onChange={(e) => setStar(e.target.value)}>
                   <option value="1">1</option>
                   <option value="2">2</option>
