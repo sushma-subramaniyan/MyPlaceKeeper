@@ -29,6 +29,8 @@ function HomePage() {
   const [showPopup, setShowPopup] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [selectedPopupId, setSelectedPopupId] = useState(null);
+  const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -90,7 +92,9 @@ function HomePage() {
     } else {
       console.log(id, lat, lng)
       setCurrentPlaceId(id);
+      setSelectedPopupId(id);
       setViewState({ ...viewState, latitude: lat, longitude: lng })
+      setShowNewPlacePopup(false);
     }
 
   };
@@ -103,6 +107,8 @@ function HomePage() {
         lat,
         edit: false,
       });
+      setShowNewPlacePopup (true);
+      setCurrentPlaceId(null);
     }
   };
 
@@ -200,7 +206,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id && (
+          currentPlaceId === p._id && selectedPopupId === p._id && (
             <Popup
               key={p._id}
               longitude={p.long}
@@ -233,7 +239,7 @@ function HomePage() {
             </Popup>
           )
         ))}
-        {newPlace && (
+        {showNewPlacePopup && newPlace && (
           <Popup
             longitude={newPlace.lng}
             latitude={newPlace.lat}
