@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import "../components/Instructions.css"
+import { useState } from 'react';
 
 
 const steps = [
@@ -26,78 +27,68 @@ const steps = [
   },
 ];
 
-export default function VerticalLinearStepper() {
-  const [activeStep, setActiveStep] = React.useState(0);
-
+const VerticalLinearStepper = ({ setShowLogin, setShowInstruction }) => {
+  const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-   
+    if(activeStep === 2){
+      setShowInstruction(false)
+      setShowLogin(true)
+      setActiveStep(0)
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   return (
     <div className='container'>
-    <Box   sx={{ maxWidth: 400 }} >
-      <Stepper   activeStep={activeStep} orientation="vertical">
-        {steps.map((step, index) => (
-          <Step    key={step.label}>
-            <StepLabel
-            
-              optional={
-                index === 2 ? (
-                  <Typography  variant="caption">Last step</Typography>
-                ) : null
-              }
-            >
-              {step.label}
-            </StepLabel>
-            <StepContent>
-              <Typography>{step.description}</Typography>
-              <Box sx={{ mb: 2 }}>
-                <div >
-                  <Button
-                  style={{'backgroundColor':' rgb(84, 206, 206)'}}
-                    variant="contained"
-                    onClick={handleNext}
-                    sx={{ mt: 1, mr: 1 }}
-                  >
-                    {index === steps.length - 1 ? 'Finish' : 'Continue'}
-                  </Button>
-                  <Button
-                  style={{'color':' rgb(84, 206, 206)'}}
-                    disabled={index === 0}
-                    onClick={handleBack}
-                    sx={{ mt: 1, mr: 1 }}
-                  >
-                    Back
-                  </Button>
-                </div>
-              </Box>
-             
-            </StepContent>
-          </Step>
-        ))}
-      </Stepper>
-      {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed </Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
-          </Button>
-          <Button>
-            Enter
-          </Button>
-        </Paper>
-      )}
-    </Box>
+      <Box sx={{ maxWidth: 400 }} >
+        <Stepper activeStep={activeStep} orientation="vertical">
+          {steps.map((step, index) => (
+            <Step key={step.label}>
+              <StepLabel
+
+                optional={
+                  index === 2 ? (
+                    <Typography variant="caption">Last step</Typography>
+                  ) : null
+                }
+              >
+                {step.label}
+              </StepLabel>
+              <StepContent>
+                <Typography>{step.description}</Typography>
+                <Box sx={{ mb: 2 }}>
+                  <div >
+                    <Button
+                      style={{ 'backgroundColor': ' rgb(84, 206, 206)' }}
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{ mt: 1, mr: 1 }}
+                    >
+                      {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                    </Button>
+                    {index !== 0 && <Button
+                      style={{ 'color': ' rgb(84, 206, 206)' }}
+                      onClick={handleBack}
+                      sx={{ mt: 1, mr: 1 }}
+                    >
+                      Back
+                    </Button>}
+                  </div>
+                </Box>
+
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
     </div>
   );
 }
+export default VerticalLinearStepper

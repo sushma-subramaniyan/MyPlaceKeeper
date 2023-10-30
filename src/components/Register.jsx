@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import RoomIcon from '@mui/icons-material/Room';
 
 
-const Register = ({setShowRegister , setShowLogin}) => {
+const Register = ({setShowRegister , setShowInstruction}) => {
   const [error, setError] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -30,7 +30,7 @@ const Register = ({setShowRegister , setShowLogin}) => {
       );
       if (response.ok) {
         setShowRegister(false)
-        setShowLogin(true)
+        setShowInstruction(true)
       } else {
         setError(true);
       }
