@@ -31,6 +31,7 @@ function HomePage() {
   const [showLogin, setShowLogin] = useState(false);
   const [selectedPopupId, setSelectedPopupId] = useState(null);
   const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
+  const [loginOrRegisterClicked, setLoginOrRegisterClicked] = useState(false);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -164,6 +165,8 @@ function HomePage() {
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
+    setShowNewPlacePopup(false);
+    setLoginOrRegisterClicked(true); 
   };
 
 
@@ -182,8 +185,7 @@ function HomePage() {
         onDblClick={handleAddClick}
       // transitionDuration="5000000" its not working
       >
-
-
+ 
         { pins.map((p) => (
           <Marker
             longitude={p.long}
@@ -300,8 +302,12 @@ function HomePage() {
             <button
               className="button login"
               onClick={() => {
+          
                 setShowLogin(true)
                 setShowRegister(false)
+
+                setShowNewPlacePopup(false); 
+                setCurrentPlaceId(null);
               }
               }
             >
@@ -310,6 +316,8 @@ function HomePage() {
             <button
               className="button register"
               onClick={() => {
+                setShowNewPlacePopup(false); 
+                setCurrentPlaceId(null);
                 setShowLogin(false)
                 setShowRegister(true)
               }
@@ -326,6 +334,7 @@ function HomePage() {
           // setCurrentUser={setCurrentUser}
           // myStorage={myStorage}
           />
+       
         )} 
       </Map>
     </div>
