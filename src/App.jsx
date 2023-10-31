@@ -6,6 +6,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import PrivateRoute from './components/PrivateRoute';
 import Instructions from './components/Instructions';
+import  Collections  from './components/Collections';
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/Instructions" element={<Instructions />} />
+      <Route path="/Collections" element={<Collections />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path='/testpage' element={

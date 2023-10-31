@@ -11,6 +11,7 @@ import Instructions from '../components/Instructions'
 import { AuthContext } from '../contexts/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Collections from '../components/Collections';
 
 
 function HomePage() {
@@ -36,6 +37,7 @@ function HomePage() {
   )
   const [showInstruction, setShowInstruction] = useState(false);
   const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
+  const [showCollection, setShowCollection] = useState(false);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -312,10 +314,9 @@ function HomePage() {
             <button
               className="button login"
               onClick={() => {
-          
                 setShowLogin(true)
                 setShowRegister(false)
-
+                setShowCollection(false)
                 setShowNewPlacePopup(false); 
                 setCurrentPlaceId(null);
               }
@@ -330,11 +331,29 @@ function HomePage() {
                 setCurrentPlaceId(null);
                 setShowLogin(false)
                 setShowRegister(true)
+                setShowCollection(false)
               }
               }
             >
               Register
             </button>
+            <button
+              className="button register"
+              onClick={() => {
+                setShowNewPlacePopup(false); 
+                setCurrentPlaceId(null);
+                setShowLogin(false)
+                setShowRegister(false)
+                setShowCollection(true)
+              }
+              }
+            >
+              Collections
+            </button>
+            {/*<div>
+              <Collections showList={showList} setshowList={setshowList} />
+              {showList && <List />}
+            </div>*/}
           </div>
         )}
         {showRegister && 
@@ -350,6 +369,10 @@ function HomePage() {
             setOpenSnakbar={setOpenSnakbar} 
           />
         }
+        { showCollection && 
+          <Collections
+          />
+        }
 
         <Snackbar 
           open={openSnakbar.open} 
@@ -362,6 +385,7 @@ function HomePage() {
           </MuiAlert>
         </Snackbar>
         {showInstruction && <Instructions setShowLogin={setShowLogin} setShowInstruction={setShowInstruction}/>}
+     
       </Map>
     </div>
   );
