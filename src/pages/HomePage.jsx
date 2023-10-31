@@ -11,6 +11,8 @@ import Instructions from '../components/Instructions'
 import { AuthContext } from '../contexts/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Rating from '@mui/material/Rating';
+
 
 
 function HomePage() {
@@ -19,7 +21,6 @@ function HomePage() {
   //const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
-  const [star, setStar] = useState(0);
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
@@ -36,9 +37,10 @@ function HomePage() {
     severity: 'success', // 'error' | 'warning' | 'info' | 'success'
   }
   )
-  const [showInstruction, setShowInstruction] = useState(false);  const [selectedPopupId, setSelectedPopupId] = useState(null);
+  const [showInstruction, setShowInstruction] = useState(false);  
+  const [rating, setRating] = useState(0);
   const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
-  const [loginOrRegisterClicked, setLoginOrRegisterClicked] = useState(false);
+
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -71,7 +73,7 @@ function HomePage() {
         setNewPlace(null);
         setTitle('')
         setDesc('')
-        setStar(1)
+        setRating(1)
         setPins((prevPins) => prevPins.filter((pin) => pin._id !== placeId));
       } else {
         console.log("Error deleting pin");
@@ -89,7 +91,7 @@ function HomePage() {
     if (selectedPin.username === user?.username) {
       setTitle(selectedPin.title)
       setDesc(selectedPin.desc)
-      setStar(selectedPin.star)
+      setRating(selectedPin.rating)
       setNewPlace({
         lng,
         lat,
@@ -117,6 +119,9 @@ function HomePage() {
       });
       setShowNewPlacePopup (true);
       setCurrentPlaceId(null);
+      setTitle(''); 
+      setDesc(''); 
+      setRating(1);
     }
   };
 
@@ -128,7 +133,7 @@ function HomePage() {
       username: user.username,
       title,
       desc,
-      rating: star,
+      rating: rating,
       lat: newPlace.lat,
       long: newPlace.lng,
     };
@@ -154,13 +159,11 @@ function HomePage() {
             prevPins.map((pin) => (pin._id === newPlace.id ? data : pin))
           );
         } else {
-
-
           setPins([...pins, data]);
         }
         setTitle('')
         setDesc('')
-        setStar(1)
+        setRating(1)
         setNewPlace(null);
       }
     } catch (error) {
@@ -171,7 +174,7 @@ function HomePage() {
   const handleLogout = () => {
     setTitle('')
     setDesc('')
-    setStar(1)
+    setRating(1)
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
@@ -218,7 +221,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id && selectedPopupId === p._id && (
+          currentPlaceId === p._id &&  (
             <Popup
               key={p._id}
               longitude={p.long}
@@ -261,7 +264,13 @@ function HomePage() {
             anchor="top"
             closeButton={true}
             closeOnClick={false}
-            onClose={() => setNewPlace(null)}>
+            onClose={() => {
+              setNewPlace(null);
+              setTitle('');    
+              setDesc('');     
+              setRating(1);    
+            }}
+          >
 
             <div>
                 <form onSubmit={handleSubmit} className='form'>
@@ -279,13 +288,13 @@ function HomePage() {
                   onChange={(e) => setDesc(e.target.value)}
                 />
                 <label className='newRating'>Rating</label>
-                <select value={star} defaultValue={star} onChange={(e) => setStar(e.target.value)}>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+                <Rating
+                       name="your-rating"
+                       value={rating}
+                       onChange={(event, newValue) => {
+                     setRating(newValue);
+                    }}
+                  />
                 {newPlace.edit ? (
                   <>
                     <button type="submit" className="submitButton">
