@@ -15,8 +15,6 @@ import MuiAlert from '@mui/material/Alert';
 
 function HomePage() {
   const { user, logout } = useContext(AuthContext)
-  const myStorage = window.localStorage;
-  //const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
   const [star, setStar] = useState(0);
@@ -36,9 +34,8 @@ function HomePage() {
     severity: 'success', // 'error' | 'warning' | 'info' | 'success'
   }
   )
-  const [showInstruction, setShowInstruction] = useState(false);  const [selectedPopupId, setSelectedPopupId] = useState(null);
+  const [showInstruction, setShowInstruction] = useState(false);
   const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
-  const [loginOrRegisterClicked, setLoginOrRegisterClicked] = useState(false);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -83,9 +80,8 @@ function HomePage() {
 
 
   const handleMarkerClick = (id, lat, lng) => {
-    console.log(user)
     const selectedPin = pins.find(pin => pin._id === id)
-    console.log(selectedPin)
+    // console.log(selectedPin)
     if (selectedPin.username === user?.username) {
       setTitle(selectedPin.title)
       setDesc(selectedPin.desc)
@@ -96,11 +92,10 @@ function HomePage() {
         edit: true,
         id,
       });
-
+      setShowNewPlacePopup (true);
+      setCurrentPlaceId(null);
     } else {
-      console.log(id, lat, lng)
       setCurrentPlaceId(id);
-      setSelectedPopupId(id);
       setViewState({ ...viewState, latitude: lat, longitude: lng })
       setShowNewPlacePopup(false);
     }
@@ -110,6 +105,9 @@ function HomePage() {
   const handleAddClick = (event) => {
     if (user) {
       const { lng, lat } = event.lngLat;
+      setTitle('')
+      setDesc('')
+      setStar(1)
       setNewPlace({
         lng,
         lat,
@@ -176,7 +174,6 @@ function HomePage() {
     setCurrentPlaceId(null)
     logout();
     setShowNewPlacePopup(false);
-    setLoginOrRegisterClicked(true); 
   };
 
 
@@ -218,7 +215,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id && selectedPopupId === p._id && (
+          currentPlaceId === p._id  && (
             <Popup
               key={p._id}
               longitude={p.long}
