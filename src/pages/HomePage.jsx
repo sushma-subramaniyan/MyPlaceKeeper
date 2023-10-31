@@ -14,6 +14,7 @@ import MuiAlert from '@mui/material/Alert';
 import { Rating } from '@mui/material';
 
 
+
 function HomePage() {
   const { user, logout } = useContext(AuthContext)
   const [title, setTitle] = useState(null);
@@ -83,6 +84,7 @@ function HomePage() {
   const handleMarkerClick = (id, lat, lng) => {
     const selectedPin = pins.find(pin => pin._id === id)
     // console.log(selectedPin)
+   
     if (selectedPin.username === user?.username) {
       setTitle(selectedPin.title)
       setDesc(selectedPin.desc)
@@ -175,6 +177,7 @@ function HomePage() {
     setCurrentPlaceId(null)
     logout();
     setShowNewPlacePopup(false);
+    
   };
 
 
@@ -186,10 +189,12 @@ function HomePage() {
         // onContextMenu={handleAddClick}
         onMove={evt => setViewState(evt.viewState)}
         doubleClickZoom={false}
-        style={{ height: '100vh' }}
+        style={{ height: '100vh',transitionDuration: '2s' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
         onDblClick={handleAddClick}
+      
+        
       // transitionDuration="5000000" its not working
       >
  
@@ -200,6 +205,7 @@ function HomePage() {
             anchor="bottom"
             key={p._id}
             style={{ zIndex: '20' }}
+            onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
           >
 
 
@@ -214,6 +220,7 @@ function HomePage() {
             />
           </Marker>
         ))}
+      
 
         {pins.map((p) => (
           currentPlaceId === p._id  && (
@@ -226,7 +233,6 @@ function HomePage() {
               closeOnClick={false}
               onClose={() => setCurrentPlaceId(null)}
               className="popup"
-
             >
               <div>
                <div className='card'>
@@ -269,15 +275,19 @@ function HomePage() {
 
             <div>
                 <form onSubmit={handleSubmit} className='form'>
-                <label className='title'>Title</label>
+                <label className='title'>Place</label>
                 <input
                   placeholder="Enter a title"
                   autoFocus
                   value={title}
+                  spellCheck={false}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-                <label className='Description'>Description</label>
+                <label className='Description'>Review</label>
                 <textarea
+                  style={{resize:'none'}}
+                  rows={3}
+                  spellCheck={false}
                   placeholder="Say us something about this place."
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
@@ -307,6 +317,7 @@ function HomePage() {
               </form>
             </div>
           </Popup >
+
         )}
 
         {user ? (

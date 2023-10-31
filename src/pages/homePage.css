@@ -117,8 +117,13 @@ textarea::placeholder {
   font-size: 12px;
   /* color: rgb(185, 184, 184); */
 }
-.title , .Description{
-  text-decoration-line: underline;
+.title {
+   color: blue;
+   margin-bottom: 10px;
+}
+
+.Description{
+  margin-top: 10px;
   color: blue;
 }
 
@@ -127,8 +132,9 @@ textarea::placeholder {
   color: #333;
   margin-top: 10px;
   color: blue;
-  text-decoration-line: underline;
   margin-top: 10px;
+  margin-bottom: 10px;
+  
 }
 
 .newRating select {
@@ -162,6 +168,7 @@ textarea {
   color: white;
   background-color: tomato;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .buttons,
@@ -198,4 +205,5 @@ textarea {
 }
 .mapboxgl-popup-close-button{
   font-size: 25px;
+  border: 1px solid #000;
 }
