@@ -12,13 +12,15 @@ import { AuthContext } from '../contexts/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Collections from '../components/Collections';
+import { Rating } from '@mui/material';
+
 
 
 function HomePage() {
   const { user, logout } = useContext(AuthContext)
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
-  const [star, setStar] = useState(0);
+  const [rating, setRating] = useState(0);
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
@@ -70,7 +72,7 @@ function HomePage() {
         setNewPlace(null);
         setTitle('')
         setDesc('')
-        setStar(1)
+        setRating(1)
         setPins((prevPins) => prevPins.filter((pin) => pin._id !== placeId));
       } else {
         console.log("Error deleting pin");
@@ -84,10 +86,11 @@ function HomePage() {
   const handleMarkerClick = (id, lat, lng) => {
     const selectedPin = pins.find(pin => pin._id === id)
     // console.log(selectedPin)
+   
     if (selectedPin.username === user?.username) {
       setTitle(selectedPin.title)
       setDesc(selectedPin.desc)
-      setStar(selectedPin.star)
+      setRating(selectedPin.rating)
       setNewPlace({
         lng,
         lat,
@@ -107,9 +110,6 @@ function HomePage() {
   const handleAddClick = (event) => {
     if (user) {
       const { lng, lat } = event.lngLat;
-      setTitle('')
-      setDesc('')
-      setStar(1)
       setNewPlace({
         lng,
         lat,
@@ -117,6 +117,9 @@ function HomePage() {
       });
       setShowNewPlacePopup(true);
       setCurrentPlaceId(null);
+      setTitle('')
+      setDesc('')
+      setRating(1)
     }
   };
 
@@ -128,7 +131,7 @@ function HomePage() {
       username: user.username,
       title,
       desc,
-      rating: star,
+      rating: rating,
       lat: newPlace.lat,
       long: newPlace.lng,
     };
@@ -160,7 +163,7 @@ function HomePage() {
         }
         setTitle('')
         setDesc('')
-        setStar(1)
+        setRating(1)
         setNewPlace(null);
       }
     } catch (error) {
@@ -171,11 +174,12 @@ function HomePage() {
   const handleLogout = () => {
     setTitle('')
     setDesc('')
-    setStar(1)
+    setRating(1)
     setNewPlace(null);
     setCurrentPlaceId(null)
     logout();
     setShowNewPlacePopup(false);
+    
   };
 
 
@@ -187,10 +191,12 @@ function HomePage() {
         // onContextMenu={handleAddClick}
         onMove={evt => setViewState(evt.viewState)}
         doubleClickZoom={false}
-        style={{ height: '100vh' }}
+        style={{ height: '100vh',transitionDuration: '2s' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
         onDblClick={handleAddClick}
+      
+        
       // transitionDuration="5000000" its not working
       >
 
@@ -201,6 +207,7 @@ function HomePage() {
             anchor="bottom"
             key={p._id}
             style={{ zIndex: '20' }}
+            onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
           >
 
 
@@ -215,6 +222,7 @@ function HomePage() {
             />
           </Marker>
         ))}
+      
 
         {pins.map((p) => (
           currentPlaceId === p._id && (
@@ -227,7 +235,6 @@ function HomePage() {
               closeOnClick={false}
               onClose={() => setCurrentPlaceId(null)}
               className="popup"
-
             >
               <div>
                 <div className='card'>
@@ -261,31 +268,40 @@ function HomePage() {
             anchor="top"
             closeButton={true}
             closeOnClick={false}
-            onClose={() => setNewPlace(null)}>
+            onClose={() => {
+              setNewPlace(null);
+              setTitle('');    
+              setDesc('');     
+              setRating(1);    
+            }}>
 
             <div>
-              <form onSubmit={handleSubmit} className='form'>
-                <label className='title'>Title</label>
+                <form onSubmit={handleSubmit} className='form'>
+                <label className='title'>Place</label>
                 <input
                   placeholder="Enter a title"
                   autoFocus
                   value={title}
+                  spellCheck={false}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-                <label className='Description'>Description</label>
+                <label className='Description'>Review</label>
                 <textarea
+                  style={{resize:'none'}}
+                  rows={3}
+                  spellCheck={false}
                   placeholder="Say us something about this place."
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                 />
                 <label className='newRating'>Rating</label>
-                <select value={star} defaultValue={star} onChange={(e) => setStar(e.target.value)}>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+                <Rating
+                  name="your-rating"
+                  value={rating}
+                  onChange={(event, newValue) => {
+                    setRating(newValue);
+                  }}
+                />
                 {newPlace.edit ? (
                   <>
                     <button type="submit" className="submitButton">
@@ -303,6 +319,7 @@ function HomePage() {
               </form>
             </div>
           </Popup >
+
         )}
 
         {user ? (
