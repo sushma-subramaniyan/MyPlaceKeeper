@@ -30,7 +30,7 @@ function HomePage() {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [openSnakbar, setOpenSnakbar] = useState({
-    open:false,
+    open: false,
     message: '',
     severity: 'success', // 'error' | 'warning' | 'info' | 'success'
   }
@@ -94,7 +94,7 @@ function HomePage() {
         edit: true,
         id,
       });
-      setShowNewPlacePopup (true);
+      setShowNewPlacePopup(true);
       setCurrentPlaceId(null);
     } else {
       setCurrentPlaceId(id);
@@ -115,7 +115,7 @@ function HomePage() {
         lat,
         edit: false,
       });
-      setShowNewPlacePopup (true);
+      setShowNewPlacePopup(true);
       setCurrentPlaceId(null);
     }
   };
@@ -193,8 +193,8 @@ function HomePage() {
         onDblClick={handleAddClick}
       // transitionDuration="5000000" its not working
       >
- 
-        { pins.map((p) => (
+
+        {pins.map((p) => (
           <Marker
             longitude={p.long}
             latitude={p.lat}
@@ -217,7 +217,7 @@ function HomePage() {
         ))}
 
         {pins.map((p) => (
-          currentPlaceId === p._id  && (
+          currentPlaceId === p._id && (
             <Popup
               key={p._id}
               longitude={p.long}
@@ -230,26 +230,26 @@ function HomePage() {
 
             >
               <div>
-               <div className='card'>
-                <label className='labelplace'>Place</label>
-                <p className="place">{p.title}</p>
-                <label className='labelReview'>Review</label>
-                <p className="desc">{p.desc}</p>
-                <label className='labelRating'>Rating</label>
-             
-                <div className='star'>
-                  {Array(p.rating).fill(0).map((_, index) => (
-                    <StarIcon key={index} className='star' />
-                  ))}
+                <div className='card'>
+                  <label className='labelplace'>Place</label>
+                  <p className="place">{p.title}</p>
+                  <label className='labelReview'>Review</label>
+                  <p className="desc">{p.desc}</p>
+                  <label className='labelRating'>Rating</label>
 
+                  <div className='star'>
+                    {Array(p.rating).fill(0).map((_, index) => (
+                      <StarIcon key={index} className='star' />
+                    ))}
+
+                  </div>
+                  <label className='labelInfo'>Created By</label>
+                  <span className="username">
+                    {p.username}
+                  </span>
+                  <span className="date">{format(p.createdAt)}</span>
                 </div>
-                <label className='labelInfo'>Created By</label>
-                <span className="username">
-                  {p.username}
-                </span>
-                <span className="date">{format(p.createdAt)}</span>
               </div>
-           </div>
             </Popup>
           )
         ))}
@@ -264,7 +264,7 @@ function HomePage() {
             onClose={() => setNewPlace(null)}>
 
             <div>
-                <form onSubmit={handleSubmit} className='form'>
+              <form onSubmit={handleSubmit} className='form'>
                 <label className='title'>Title</label>
                 <input
                   placeholder="Enter a title"
@@ -306,41 +306,14 @@ function HomePage() {
         )}
 
         {user ? (
-          <button className="button logout" onClick={handleLogout}>
-            Log out
-          </button>
-        ) : (
           <div className="buttons">
-            <button
-              className="button login"
-              onClick={() => {
-                setShowLogin(true)
-                setShowRegister(false)
-                setShowCollection(false)
-                setShowNewPlacePopup(false); 
-                setCurrentPlaceId(null);
-              }
-              }
-            >
-              Log in
+            <button className="button" onClick={handleLogout}>
+              Log out
             </button>
             <button
-              className="button register"
+              className="button collections"
               onClick={() => {
-                setShowNewPlacePopup(false); 
-                setCurrentPlaceId(null);
-                setShowLogin(false)
-                setShowRegister(true)
-                setShowCollection(false)
-              }
-              }
-            >
-              Register
-            </button>
-            <button
-              className="button register"
-              onClick={() => {
-                setShowNewPlacePopup(false); 
+                setShowNewPlacePopup(false);
                 setCurrentPlaceId(null);
                 setShowLogin(false)
                 setShowRegister(false)
@@ -350,42 +323,67 @@ function HomePage() {
             >
               Collections
             </button>
-            {/*<div>
-              <Collections showList={showList} setshowList={setshowList} />
-              {showList && <List />}
-            </div>*/}
+          </div>
+        ) : (
+          <div className="buttons">
+            <button
+              className="button login"
+              onClick={() => {
+                setShowLogin(true)
+                setShowRegister(false)
+                setShowCollection(false)
+                setShowNewPlacePopup(false);
+                setCurrentPlaceId(null);
+              }
+              }
+            >
+              Log in
+            </button>
+            <button
+              className="button register"
+              onClick={() => {
+                setShowNewPlacePopup(false);
+                setCurrentPlaceId(null);
+                setShowLogin(false)
+                setShowRegister(true)
+                setShowCollection(false)
+              }
+              }
+            >
+              Register
+            </button>
           </div>
         )}
-        {showRegister && 
-          <Register 
-            setShowRegister={setShowRegister} 
+        {showRegister &&
+          <Register
+            setShowRegister={setShowRegister}
             setShowInstruction={setShowInstruction}
-            setOpenSnakbar={setOpenSnakbar} 
+            setOpenSnakbar={setOpenSnakbar}
           />}
 
-        {showLogin && 
-          <Login 
-            setShowLogin={setShowLogin} 
-            setOpenSnakbar={setOpenSnakbar} 
+        {showLogin &&
+          <Login
+            setShowLogin={setShowLogin}
+            setOpenSnakbar={setOpenSnakbar}
           />
         }
-        { showCollection && 
+        {showCollection &&
           <Collections
           />
         }
 
-        <Snackbar 
-          open={openSnakbar.open} 
+        <Snackbar
+          open={openSnakbar.open}
           autoHideDuration={3000}
-          onClose={() => setOpenSnakbar({open: false, message: ''})}
+          onClose={() => setOpenSnakbar({ open: false, message: '' })}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
+        >
           <MuiAlert elevation={6} variant="filled" severity={openSnakbar.severity} sx={{ width: '100%' }}>
             {openSnakbar.message}
           </MuiAlert>
         </Snackbar>
-        {showInstruction && <Instructions setShowLogin={setShowLogin} setShowInstruction={setShowInstruction}/>}
-     
+        {showInstruction && <Instructions setShowLogin={setShowLogin} setShowInstruction={setShowInstruction} />}
+
       </Map>
     </div>
   );
