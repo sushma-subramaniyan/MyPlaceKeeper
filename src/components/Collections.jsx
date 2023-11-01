@@ -133,6 +133,9 @@ const handleClose = () => {
 
   return (
     <div className="collections-container">
+      <div className="collection">
+      Your Collections
+      </div>
       <List dense sx={{maxHeight: '200px', overflowY: 'auto',  width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {collections.map((collection) => (
          // const labelId = `checkbox-list-secondary-label-${item}`;
