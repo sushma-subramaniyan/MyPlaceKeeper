@@ -11,27 +11,24 @@ import { AuthContext } from "../contexts/AuthContext";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
 
-
-
-const Collections = ({setShowComponent, selectedCollection , setSelectedCollection, selectedPin, setSelectedPin}) => {
+const CollectionPinsList = ({selectedCollection, setSelectedCollection, setShowComponent}) => {
 
   const [inputVisible, setInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [collections, setCollections] = useState([]);
+  const [collectionPins, setCollectionPins] = useState([]);
   const [newCollectionName, setNewCollectionName] = useState('');
   const { user } = useContext(AuthContext)
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedPin, setSelectedPin] = useState(null);
 
-  const toggleInput = () => {
-    setInputVisible(!inputVisible);
-  };
 
-  const fetchCollections = async ()=>{
+  const fetchCollectionPins = async ()=>{
     try {
-       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection/user/${user._id}`);
+       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection/${selectedCollection._id}/pins`);
        if (response.ok) {
           const data = await response.json();
-          setCollections(data);
+          setCollectionPins(data);
+          console.log(data)
         } else {
           console.log('Failed to fetch data');
         }
@@ -41,39 +38,41 @@ const Collections = ({setShowComponent, selectedCollection , setSelectedCollecti
     }
  }
 
-  const handleCollection = async () => {
-   try {
-     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection${selectedCollection ? '/' + selectedCollection._id : ''}`, {
-       method: selectedCollection ? 'PUT':'POST',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify({ name: newCollectionName, user: user._id }),
-     });
+//   const handleCollection = async () => {
 
-     if (response.ok) {
-       // Fetch and update the collections list after creating a new collection
-       toggleInput();
-       await fetchCollections();
-     } else {
-       console.log('Failed to create a new collection');
-     }
-   } catch (error) {
-     console.log('Error:', error);
-   }
-   setInputValue('');
-   setNewCollectionName('');
-   setInputVisible(false);
-   setSelectedCollection(null);
- };
+//    try {
+//      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection${selectedCollection ? '/' + selectedCollection._id : ''}`, {
+//        method: selectedCollection ? 'PUT':'POST',
+//        headers: {
+//          'Content-Type': 'application/json',
+//        },
+//        body: JSON.stringify({ name: newCollectionName, user: user._id }),
+//      });
 
- const handleMenuClick = (event, collection) => {
+//      if (response.ok) {
+//        // Fetch and update the collections list after creating a new collection
+//        toggleInput();
+//        await fetchCollectionPins();
+//      } else {
+//        console.log('Failed to create a new collection');
+//      }
+//    } catch (error) {
+//      console.log('Error:', error);
+//    }
+//    setInputValue('');
+//    setNewCollectionName('');
+//    setInputVisible(false);
+//    setSelectedCollection(null);
+//  };
+
+ const handleMenuClick = (event, pin) => {
   setAnchorEl(event.currentTarget);
-  setSelectedCollection(collection);
+  setSelectedPin(pin);
 };
 
 const handleMenuClose = () => {
   setAnchorEl(null);
+  setSelectedPin(null);
 };
 
 const handleUpdate = () => {
@@ -85,80 +84,57 @@ const handleUpdate = () => {
 const handleDelete = async () => {
   // Implement your delete logic here
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection/${selectedCollection._id}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection/${selectedCollection._id}/pins/${selectedPin._id}`, {
       method: 'DELETE',
     });
     if (response.ok) {
-      await fetchCollections();
+      await fetchCollectionPins();
     } else {
-      console.log('Failed to delete the collection');
+      console.log('Failed to delete the pins from collection');
     }
   } catch (error) {
     console.log('Error:', error);
   }
   handleMenuClose();
-  setSelectedCollection(null);
 };
 
-const handelCollectionSelected = async (collection) => {
-  console.log(selectedPin)
-  if(selectedPin) {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pincollection/${collection._id}/pins/${selectedPin}`, {
-        method: 'POST',
-      });
-      if (response.ok) {
-        setSelectedPin(null);
-      } else {
-        setSelectedPin(null);
-        console.log('Failed to add pin to collection');
-      }
-    } catch (error) {
-      setSelectedPin(null);
-      console.log('Error:', error);
-    }
-  }
-  setSelectedCollection(collection);
-  setShowComponent({collectionPinsList:true, collection: false})
-}
-
 const handleClose = () => {
-  setShowComponent({collection:false})
+    setShowComponent({collectionPinsList:false});
 }
-
   useEffect(()=>{
-   fetchCollections();
+   fetchCollectionPins();
   },[]);
 
 
   return (
     <div className="collections-container">
+      
       <List dense sx={{maxHeight: '200px', overflowY: 'auto',  width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        {collections.map((collection) => (
+        {collectionPins.map((pin) => (
          // const labelId = `checkbox-list-secondary-label-${item}`;
          // return (
-          <ListItem
-            key={collection._id}
+            <ListItem
+              key={pin._id}
 
-          // disablePadding
-          >
-            <ListItemButton onAnimationEnd={() => handelCollectionSelected(collection)} >
-              <ListItemText primary={collection.name} />
-            </ListItemButton>
-            <IconButton
+              // disablePadding
+            >
+            <ListItemButton>
+              <ListItemText primary={pin.title} />
+              <IconButton
                 aria-label="options"
-                >
-                <MoreVertIcon onClick={(event) => handleMenuClick(event, collection)} />
+                onClick={(event) => handleMenuClick(event, pin)}>
+                <MoreVertIcon />
               </IconButton>
               <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
                 <MenuItem onClick={handleUpdate}>Update</MenuItem>
                 <MenuItem onClick={(event) => handleDelete(event)}>Delete</MenuItem>
               </Menu>
-          </ListItem>
+            </ListItemButton>
+            </ListItem>
           ))}
        
       </List>
-      <div style={{ textAlign: 'center' }}>
+      {/* <div style={{ textAlign: 'center' }}>
           {inputVisible ? (
             <div>
             <TextField
@@ -182,10 +158,11 @@ const handleClose = () => {
               +
             </Button>
           )}
-        </div>
+        </div> */}
         <CloseIcon className="loginCancel" onClick={handleClose} />
     </div>
+
   );
 }
 
-export default Collections;
+export default CollectionPinsList;

@@ -12,6 +12,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Collections from '../components/Collections';
+import CollectionPinsList from '../components/CollectionPinsList';
 import { Rating } from '@mui/material';
 
 
@@ -29,17 +30,16 @@ function HomePage() {
     longitude: 17,
     zoom: 5,
   });
-  const [showRegister, setShowRegister] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
   const [openSnakbar, setOpenSnakbar] = useState({
     open: false,
     message: '',
     severity: 'success', // 'error' | 'warning' | 'info' | 'success'
   }
   )
-  const [showInstruction, setShowInstruction] = useState(false);
+  const [showComponent, setShowComponent] = useState({collection: false, login: false, register: false, instruction: false, collectionPinsList: false});
   const [showNewPlacePopup, setShowNewPlacePopup] = useState(null);
-  const [showCollection, setShowCollection] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [selectedPin, setSelectedPin] = useState(null);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -182,7 +182,14 @@ function HomePage() {
     
   };
 
-
+  const handleAddPinToCollection = (pinId) => {
+    console.log(pinId)
+    setSelectedPin(pinId)
+    setShowComponent({collection: true})
+    setShowNewPlacePopup(false);
+    setNewPlace(null);
+    setCurrentPlaceId(null);
+  }
 
   return (
     <div className="App">
@@ -224,12 +231,12 @@ function HomePage() {
         ))}
       
 
-        {pins.map((p) => (
-          currentPlaceId === p._id && (
+        {pins.map((pin) => (
+          currentPlaceId === pin._id && (
             <Popup
-              key={p._id}
-              longitude={p.long}
-              latitude={p.lat}
+              key={pin._id}
+              longitude={pin.long}
+              latitude={pin.lat}
               anchor="top"
               closeButton={true}
               closeOnClick={false}
@@ -239,22 +246,25 @@ function HomePage() {
               <div>
                 <div className='card'>
                   <label className='labelplace'>Place</label>
-                  <p className="place">{p.title}</p>
+                  <p className="place">{pin.title}</p>
                   <label className='labelReview'>Review</label>
-                  <p className="desc">{p.desc}</p>
+                  <p className="desc">{pin.desc}</p>
                   <label className='labelRating'>Rating</label>
 
                   <div className='star'>
-                    {Array(p.rating).fill(0).map((_, index) => (
+                    {Array(pin.rating).fill(0).map((_, index) => (
                       <StarIcon key={index} className='star' />
                     ))}
 
                   </div>
                   <label className='labelInfo'>Created By</label>
                   <span className="username">
-                    {p.username}
+                    {pin.username}  {format(pin.createdAt)}
                   </span>
-                  <span className="date">{format(p.createdAt)}</span>
+                  <button type="button" onClick={() => handleAddPinToCollection(pin._id)} className="submitButton">
+                    Add Pin to Collection
+                  </button>
+                  {/* <span className="date">{format(p.createdAt)}</span> */}
                 </div>
               </div>
             </Popup>
@@ -310,6 +320,9 @@ function HomePage() {
                     <button type="button" onClick={() => handleDelete(newPlace.id)} className="submitButton">
                       Delete Pin
                     </button>
+                    <button type="button" onClick={() => handleAddPinToCollection(newPlace.id)} className="submitButton">
+                      Add Pin to Collection
+                    </button>
                   </>
                 ) : (
                   <button type="submit" className="submitButton">
@@ -330,11 +343,9 @@ function HomePage() {
             <button
               className="button collections"
               onClick={() => {
+                setShowComponent({login: false, register: false, collection: true, instruction: false})
                 setShowNewPlacePopup(false);
                 setCurrentPlaceId(null);
-                setShowLogin(false)
-                setShowRegister(false)
-                setShowCollection(true)
               }
               }
             >
@@ -346,9 +357,7 @@ function HomePage() {
             <button
               className="button login"
               onClick={() => {
-                setShowLogin(true)
-                setShowRegister(false)
-                setShowCollection(false)
+                setShowComponent({login: true, register: false, collection: false, instruction: false})
                 setShowNewPlacePopup(false);
                 setCurrentPlaceId(null);
               }
@@ -359,11 +368,9 @@ function HomePage() {
             <button
               className="button register"
               onClick={() => {
+                setShowComponent({login: false, register: true, collection: false, instruction: false})
                 setShowNewPlacePopup(false);
                 setCurrentPlaceId(null);
-                setShowLogin(false)
-                setShowRegister(true)
-                setShowCollection(false)
               }
               }
             >
@@ -371,24 +378,40 @@ function HomePage() {
             </button>
           </div>
         )}
-        {showRegister &&
+        {showComponent.register &&
           <Register
-            setShowRegister={setShowRegister}
-            setShowInstruction={setShowInstruction}
+            setShowComponent={setShowComponent}
             setOpenSnakbar={setOpenSnakbar}
           />}
 
-        {showLogin &&
+        {showComponent.login &&
           <Login
-            setShowLogin={setShowLogin}
+            setShowComponent={setShowComponent}
             setOpenSnakbar={setOpenSnakbar}
           />
         }
-        {showCollection &&
+        {showComponent.collection &&
           <Collections
+            setSelectedPin={setSelectedPin}
+            selectedPin={selectedPin}
+            selectedCollection={selectedCollection}
+            setSelectedCollection={setSelectedCollection}
+            setShowComponent={setShowComponent}
           />
         }
-
+        {showComponent.instruction &&
+          <Instructions
+            setShowComponent={setShowComponent}
+          />
+        }
+        {showComponent.collectionPinsList &&
+          <CollectionPinsList
+            selectedCollection={selectedCollection}
+            setSelectedCollection={setSelectedCollection}
+            setShowComponent={setShowComponent}
+          />
+        }
+          
         <Snackbar
           open={openSnakbar.open}
           autoHideDuration={3000}
@@ -399,8 +422,6 @@ function HomePage() {
             {openSnakbar.message}
           </MuiAlert>
         </Snackbar>
-        {showInstruction && <Instructions setShowLogin={setShowLogin} setShowInstruction={setShowInstruction} />}
-
       </Map>
     </div>
   );

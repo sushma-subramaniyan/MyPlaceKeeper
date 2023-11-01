@@ -5,7 +5,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import { Backdrop, CircularProgress } from "@mui/material";
 
 
-const Register = ({ setShowRegister, setShowInstruction, setOpenSnakbar }) => {
+const Register = ({ setOpenSnakbar, setShowComponent }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -36,10 +36,9 @@ const Register = ({ setShowRegister, setShowInstruction, setOpenSnakbar }) => {
         }
       );
       if (response.ok) {
-        setShowRegister(false)
+        setShowComponent({ instruction: true, register: false })
         setOpenBackdrop(false);
         setOpenSnakbar({ open: true, message: 'User created successfully', severity: 'success' })
-        setShowInstruction(true)
       } else {
         const parsed = await response.json()
         setOpenBackdrop(false);
@@ -54,7 +53,7 @@ const Register = ({ setShowRegister, setShowInstruction, setOpenSnakbar }) => {
   };
 
   const handleClose = () => {
-    setShowRegister(false)
+    setShowComponent({register: false})
   }
 
   return (

@@ -98,7 +98,7 @@
 
 .form {
   width: 180px;
-  height: 250px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

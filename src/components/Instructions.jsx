@@ -5,7 +5,6 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import "../components/Instructions.css"
 import { useState } from 'react';
@@ -27,13 +26,12 @@ const steps = [
   },
 ];
 
-const VerticalLinearStepper = ({ setShowLogin, setShowInstruction }) => {
+const VerticalLinearStepper = ({ setShowComponent }) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
     if(activeStep === 2){
-      setShowInstruction(false)
-      setShowLogin(true)
+      setShowComponent({instruction:false, login:true})
       setActiveStep(0)
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);

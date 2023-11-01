@@ -7,7 +7,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import { Backdrop, CircularProgress } from "@mui/material";
 
 
-const Login = ({ setShowLogin , setOpenSnakbar}) => {
+const Login = ({ setShowComponent , setOpenSnakbar}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -37,7 +37,7 @@ const Login = ({ setShowLogin , setOpenSnakbar}) => {
         const parsed = await response.json()
         login(parsed.token)
         setOpenBackdrop(false)
-        setShowLogin(false)
+        setShowComponent({login:false})
         setOpenSnakbar({ open: true, message: 'Logged in successfully', severity: 'success' })
       } else {
         const parsed = await response.json()
@@ -53,7 +53,7 @@ const Login = ({ setShowLogin , setOpenSnakbar}) => {
   };
 
   const handleClose = () => {
-    setShowLogin(false)
+    setShowComponent({login:false})
   }
 
   return (

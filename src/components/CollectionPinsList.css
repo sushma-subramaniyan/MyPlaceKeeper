@@ -17,9 +17,3 @@
     z-index: 100;
     color: black;
 }
-.loginCancel{
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    cursor:pointer;
-}
