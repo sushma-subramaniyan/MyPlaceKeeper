@@ -3,11 +3,14 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import "../components/Collections.css"
+import "../components/CollectionPinsList.css"
+import { Button } from "@mui/base";
 import { IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import { useEffect } from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
+import RoomIcon from '@mui/icons-material/Room';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const CollectionPinsList = ({ selectedCollection, setShowComponent, setOpenSnakbar }) => {
 
@@ -98,16 +101,23 @@ const CollectionPinsList = ({ selectedCollection, setShowComponent, setOpenSnakb
         fetchCollectionPins();
     }, []);
 
-
-    return (
-        <div className="collections-container">
-
-            <List dense sx={{ maxHeight: '200px', overflowY: 'auto', width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {collectionPins.map((pin) => (
-                    // const labelId = `checkbox-list-secondary-label-${item}`;
-                    // return (
-                    <ListItem
-                        key={pin._id}
+const handleBack = ()=>{
+  setShowComponent({collection:true})
+}
+  return (
+    <div className="collections-container">
+      <div className="heading-container"> 
+        <RoomIcon />
+          Your Pins
+      </div>
+      
+      
+      <List dense sx={{maxHeight: '200px', overflowY: 'auto',  width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        {collectionPins.map((pin) => (
+         // const labelId = `checkbox-list-secondary-label-${item}`;
+         // return (
+            <ListItem
+              key={pin._id}
 
                     // disablePadding
                     >
@@ -152,8 +162,9 @@ const CollectionPinsList = ({ selectedCollection, setShowComponent, setOpenSnakb
             </Button>
           )}
         </div> */}
-            <CloseIcon className="loginCancel" onClick={handleClose} />
-        </div>
+        <ArrowBackIcon className="backIcon" onClick={handleBack}/>
+        <CloseIcon className="loginCancel" onClick={handleClose} />
+    </div>
 
     );
 }

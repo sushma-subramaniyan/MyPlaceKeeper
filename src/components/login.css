@@ -21,7 +21,7 @@
     color: rgb(84, 206, 206);
     display:flex;
     align-items: center;
-    font-weight: 700;
+    font-size: 15px;
 }
 .loginBtn{
     border: none;
