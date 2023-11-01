@@ -135,11 +135,8 @@ function HomePage() {
       lat: newPlace.lat,
       long: newPlace.lng,
     };
-
-    console.log(pindId);
+    
     try {
-
-
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pins${pindId}`, {
         method: method,
         headers: {
@@ -261,10 +258,11 @@ function HomePage() {
                   <span className="username">
                     {pin.username}  {format(pin.createdAt)}
                   </span>
-                  <button type="button" onClick={() => handleAddPinToCollection(pin._id)} className="submitButton">
-                    Add Pin to Collection
-                  </button>
-                  {/* <span className="date">{format(p.createdAt)}</span> */}
+                  {user &&
+                    <button type="button" onClick={() => handleAddPinToCollection(pin._id)} className="submitButton">
+                      Add Pin to Collection
+                    </button>
+                  }
                 </div>
               </div>
             </Popup>
@@ -392,6 +390,7 @@ function HomePage() {
         }
         {showComponent.collection &&
           <Collections
+            setOpenSnakbar={setOpenSnakbar}
             setSelectedPin={setSelectedPin}
             selectedPin={selectedPin}
             selectedCollection={selectedCollection}
@@ -406,8 +405,8 @@ function HomePage() {
         }
         {showComponent.collectionPinsList &&
           <CollectionPinsList
+            setOpenSnakbar={setOpenSnakbar}
             selectedCollection={selectedCollection}
-            setSelectedCollection={setSelectedCollection}
             setShowComponent={setShowComponent}
           />
         }
