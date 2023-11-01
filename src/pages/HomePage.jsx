@@ -188,6 +188,16 @@ function HomePage() {
     setCurrentPlaceId(null);
   }
 
+  const handleClickInstructions = () => {
+    setShowComponent({
+      collection: false,
+      login: false,
+      register: false,
+      instruction: true, 
+      collectionPinsList: false
+    });
+  };
+
   return (
     <div className="App">
       <Map
@@ -195,7 +205,7 @@ function HomePage() {
         // onContextMenu={handleAddClick}
         onMove={evt => setViewState(evt.viewState)}
         doubleClickZoom={false}
-        style={{ height: '100vh',transitionDuration: '2s' }}
+        style={{ height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
         onDblClick={handleAddClick}
@@ -211,6 +221,7 @@ function HomePage() {
             anchor="bottom"
             key={p._id}
             style={{ zIndex: '20' }}
+            transitionDuration={2000} 
             onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
           >
 
@@ -276,6 +287,7 @@ function HomePage() {
             anchor="top"
             closeButton={true}
             closeOnClick={false}
+           
             onClose={() => {
               setNewPlace(null);
               setTitle('');    
@@ -335,9 +347,11 @@ function HomePage() {
 
         {user ? (
           <div className="buttons">
-            <button className="button" onClick={handleLogout}>
-              Log out
+
+             <button className="helpbutton" onClick={handleClickInstructions}>
+              Help
             </button>
+           
             <button
               className="button collections"
               onClick={() => {
@@ -348,6 +362,10 @@ function HomePage() {
               }
             >
               Collections
+            </button>
+           
+            <button className="logoutbutton" onClick={handleLogout}>
+              Log out
             </button>
           </div>
         ) : (

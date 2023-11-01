@@ -7,7 +7,8 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import "../components/Instructions.css"
-import { useState } from 'react';
+import { useState , useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 
 const steps = [
@@ -28,10 +29,12 @@ const steps = [
 
 const VerticalLinearStepper = ({ setShowComponent }) => {
   const [activeStep, setActiveStep] = useState(0);
+  const { user } = useContext(AuthContext)
+
 
   const handleNext = () => {
     if(activeStep === 2){
-      setShowComponent({instruction:false, login:true})
+      user ? setShowComponent({instruction:false}) : setShowComponent({instruction:false, login:true})
       setActiveStep(0)
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
