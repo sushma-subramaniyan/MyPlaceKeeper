@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Marker, Popup, Map } from 'react-map-gl';
+import { useState, useEffect, useContext } from 'react';
 import './homePage.css';
-import StarIcon from '@mui/icons-material/Star';
-import RoomIcon from '@mui/icons-material/Room';
-import { format } from 'timeago.js';
+//import Context
+import { AuthContext } from '../contexts/AuthContext';
+//import Components
 import Register from '../components/Register';
-import { useContext } from 'react';
 import Login from '../components/Login';
 import Instructions from '../components/Instructions'
-import { AuthContext } from '../contexts/AuthContext';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import Collections from '../components/Collections';
 import CollectionPinsList from '../components/CollectionPinsList';
-import { Rating } from '@mui/material';
-
-
+import PinCard from '../components/PinCard';
+//import MUI
+import { Rating, Snackbar, Alert } from '@mui/material';
+import RoomIcon from '@mui/icons-material/Room';
+//third party
+import { Marker, Popup, Map } from 'react-map-gl';
 
 function HomePage() {
   const { user, logout } = useContext(AuthContext)
+  const [pins, setPins] = useState([]);
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
   const [rating, setRating] = useState(0);
-  const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
   const [viewState, setViewState] = useState({
@@ -249,33 +247,10 @@ function HomePage() {
               onClose={() => setCurrentPlaceId(null)}
               className="popup"
             >
-              <div>
-                <div className='card'>
-                  <label className='labelplace'>Place</label>
-                  <p className="place">{pin.title}</p>
-                  <label className='labelReview'>Review</label>
-                  <div className='p'>
-                  <p className="desc">{pin.desc}</p>
-                  </div>
-                  <label className='labelRating'>Rating</label>
-
-                  <div className='star'>
-                    {Array(pin.rating).fill(0).map((_, index) => (
-                      <StarIcon key={index} className='star' />
-                    ))}
-
-                  </div>
-                  <label className='labelInfo'>Created By</label>
-                  <span className="username">
-                    {pin.username}  {format(pin.createdAt)}
-                  </span>
-                  {user &&
-                    <button type="button" onClick={() => handleAddPinToCollection(pin._id)} className="submitButton">
-                      Add Pin to Collection
-                    </button>
-                  }
-                </div>
-              </div>
+              <PinCard
+                pin={pin}
+                handleAddPinToCollection={handleAddPinToCollection}
+              />
             </Popup>
           )
         ))}
@@ -425,7 +400,7 @@ function HomePage() {
           <CollectionPinsList
             setOpenSnakbar={setOpenSnakbar}
             selectedCollection={selectedCollection}
-            setSelectedCollection={setSelectedCollection}
+            setSelectedCollection={setSelectedCollectioMuiAlertAn}
             setShowComponent={setShowComponent}
           />
         }
@@ -436,9 +411,9 @@ function HomePage() {
           onClose={() => setOpenSnakbar({ open: false, message: '' })}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-          <MuiAlert elevation={6} variant="filled" severity={openSnakbar.severity} sx={{ width: '100%' }}>
+          <Alert elevation={6} variant="filled" severity={openSnakbar.severity} sx={{ width: '100%' }}>
             {openSnakbar.message}
-          </MuiAlert>
+          </Alert>
         </Snackbar>
       </Map>
     </div>

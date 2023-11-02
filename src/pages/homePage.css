@@ -46,50 +46,11 @@
   transition: color 0.3s;
 }
 
-
-/* Card Component Styling */
-.card {
-  width: 150px;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  
-}
-.card label{
-  font-weight: bold;
-}
-
 .popup {
   z-index: 80;
 }
 
-.labelplace,
-.labelReview,
-.labelRating,
-.labelInfo {
-  font-size: medium;
-  color: blue;
-  cursor: pointer;
-  transition: text-decoration 0.3s, color 0.3s;
-}
 
-.labelplace:hover,
-.labelReview:hover,
-.labelRating:hover,
-.labelInfo:hover {
-  /* text-decoration-line: underline; */
-  color: darkblue;
-}
-
-
-.username {
-  font-size: 15px;
-}
-
-.star {
-  color: gold;
-}
 
 .username {
   font-size: 14px;
@@ -111,16 +72,9 @@
   
   /* background-color: #f9f9f9; */
 }
-.p{
-  
-  width: 170px;
-  overflow-y: auto;
-  
-}
 
 input {
   border: none;
-
 }
 
 input::placeholder,
@@ -258,9 +212,4 @@ textarea {
   cursor: pointer; 
   margin-right:10px;
 
-}
-
-.desc{
- 
-  overflow-wrap: break-word;
 }
