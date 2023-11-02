@@ -96,28 +96,31 @@ const CollectionPinsList = ({ selectedCollection, setShowComponent, setOpenSnakb
 
     const handleClose = () => {
         setShowComponent({ collectionPinsList: false });
+        selectedCollection(null);
+        selectedPin(null);
     }
     useEffect(() => {
         fetchCollectionPins();
     }, []);
 
-const handleBack = ()=>{
-  setShowComponent({collection:true})
-}
-  return (
-    <div className="collections-container">
-      <div className="heading-container"> 
-        <RoomIcon />
-          Your Pins
-      </div>
-      
-      
-      <List dense sx={{maxHeight: '200px', overflowY: 'auto',  width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        {collectionPins.map((pin) => (
-         // const labelId = `checkbox-list-secondary-label-${item}`;
-         // return (
-            <ListItem
-              key={pin._id}
+    const handleBack = () => {
+        setShowComponent({ collection: true, collectionPinsList: false })
+        selectedCollection(null);
+    }
+    return (
+        <div className="collections-container">
+            <div className="heading-container">
+                <RoomIcon />
+                Your Pins
+            </div>
+
+
+            <List dense sx={{ maxHeight: '200px', overflowY: 'auto', width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                {collectionPins.map((pin) => (
+                    // const labelId = `checkbox-list-secondary-label-${item}`;
+                    // return (
+                    <ListItem
+                        key={pin._id}
 
                     // disablePadding
                     >
@@ -162,9 +165,9 @@ const handleBack = ()=>{
             </Button>
           )}
         </div> */}
-        <ArrowBackIcon className="backIcon" onClick={handleBack}/>
-        <CloseIcon className="loginCancel" onClick={handleClose} />
-    </div>
+            <ArrowBackIcon className="backIcon" onClick={handleBack} />
+            <CloseIcon className="loginCancel" onClick={handleClose} />
+        </div>
 
     );
 }

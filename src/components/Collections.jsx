@@ -57,7 +57,8 @@ const Collections = ({ setShowComponent, selectedCollection, setSelectedCollecti
         selectedCollection ? setOpenSnakbar({ open: true, message: 'Collection updated successfully', severity: 'success' }) : setOpenSnakbar({ open: true, message: 'Collection created successfully', severity: 'success' })
         await fetchCollections();
       } else {
-        setOpenSnakbar({ open: true, message: 'Failed to fetch data', severity: 'error' })
+        const parsed = await response.json()
+        setOpenSnakbar({ open: true, message: parsed.message, severity: 'error' })
       }
     } catch (error) {
       console.log('Error:', error);
@@ -127,6 +128,8 @@ const Collections = ({ setShowComponent, selectedCollection, setSelectedCollecti
 
   const handleClose = () => {
     setShowComponent({ collection: false })
+    setSelectedCollection(null);
+    setSelectedPin(null);
   }
 
   useEffect(() => {

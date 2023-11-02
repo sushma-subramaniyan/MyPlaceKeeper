@@ -74,6 +74,7 @@ function HomePage() {
         setDesc('')
         setRating(1)
         setPins((prevPins) => prevPins.filter((pin) => pin._id !== placeId));
+        setOpenSnakbar({ open: true, message: 'Pin deleted successfully', severity: 'success' })
       } else {
         console.log("Error deleting pin");
       }
@@ -148,14 +149,12 @@ function HomePage() {
       if (response.ok) {
         const data = await response.json();
         if (newPlace.edit) {
-
-
+          setOpenSnakbar({ open: true, message: 'Pin updated successfully', severity: 'success' })
           setPins((prevPins) =>
             prevPins.map((pin) => (pin._id === newPlace.id ? data : pin))
           );
         } else {
-
-
+          setOpenSnakbar({ open: true, message: 'Pin created successfully', severity: 'success' })
           setPins([...pins, data]);
         }
         setTitle('')
@@ -180,7 +179,6 @@ function HomePage() {
   };
 
   const handleAddPinToCollection = (pinId) => {
-    console.log(pinId)
     setSelectedPin(pinId)
     setShowComponent({collection: true})
     setShowNewPlacePopup(false);
@@ -425,6 +423,7 @@ function HomePage() {
           <CollectionPinsList
             setOpenSnakbar={setOpenSnakbar}
             selectedCollection={selectedCollection}
+            setSelectedCollection={setSelectedCollection}
             setShowComponent={setShowComponent}
           />
         }
