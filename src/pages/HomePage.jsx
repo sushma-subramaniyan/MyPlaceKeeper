@@ -254,7 +254,9 @@ function HomePage() {
                   <label className='labelplace'>Place</label>
                   <p className="place">{pin.title}</p>
                   <label className='labelReview'>Review</label>
+                  <div className='p'>
                   <p className="desc">{pin.desc}</p>
+                  </div>
                   <label className='labelRating'>Rating</label>
 
                   <div className='star'>

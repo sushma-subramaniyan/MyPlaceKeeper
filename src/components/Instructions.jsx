@@ -25,6 +25,14 @@ const steps = [
     label: 'View other user pins',
     description: `You can see other users' pins in the app, but you are not allowed to modify them..`,
   },
+  {
+    label:'Save Your Pins',
+    description:`To save your Pin, click "Add PIN to Collection," name your preferred collection, and save the Pin there.`
+  },
+  {
+    label: 'Save other user pins',
+    description: `You can save pins from other users into your own collection.`,
+  }
 ];
 
 const VerticalLinearStepper = ({ setShowComponent }) => {
@@ -33,7 +41,7 @@ const VerticalLinearStepper = ({ setShowComponent }) => {
 
 
   const handleNext = () => {
-    if(activeStep === 2){
+    if(activeStep === 4){
       user ? setShowComponent({instruction:false}) : setShowComponent({instruction:false, login:true})
       setActiveStep(0)
     } else {
@@ -55,7 +63,7 @@ const VerticalLinearStepper = ({ setShowComponent }) => {
               <StepLabel
 
                 optional={
-                  index === 2 ? (
+                  index === 4 ? (
                     <Typography variant="caption">Last step</Typography>
                   ) : null
                 }
