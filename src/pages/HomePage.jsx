@@ -9,6 +9,7 @@ import Instructions from '../components/Instructions'
 import Collections from '../components/Collections';
 import CollectionPinsList from '../components/CollectionPinsList';
 import PinCard from '../components/PinCard';
+import NavButtons from '../components/NavButtons';
 //import MUI
 import { Rating, Snackbar, Alert } from '@mui/material';
 import RoomIcon from '@mui/icons-material/Room';
@@ -184,30 +185,16 @@ function HomePage() {
     setCurrentPlaceId(null);
   }
 
-  const handleClickInstructions = () => {
-    setShowComponent({
-      collection: false,
-      login: false,
-      register: false,
-      instruction: true, 
-      collectionPinsList: false
-    });
-  };
-
   return (
     <div className="App">
       <Map
         {...viewState}
-        // onContextMenu={handleAddClick}
         onMove={evt => setViewState(evt.viewState)}
         doubleClickZoom={false}
         style={{ height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX}
         onDblClick={handleAddClick}
-      
-        
-      // transitionDuration="5000000" its not working
       >
 
         {pins.map((p) => (
@@ -220,8 +207,6 @@ function HomePage() {
             transitionDuration={2000} 
             onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
           >
-
-
             <RoomIcon
               style={{
                 fontSize: viewState.zoom * 7,
@@ -320,55 +305,8 @@ function HomePage() {
 
         )}
 
-        {user ? (
-          <div className="buttons">
+        <NavButtons setShowComponent={setShowComponent}/>
 
-             <button className="helpbutton" onClick={handleClickInstructions}>
-              Help
-            </button>
-           
-            <button
-              className="button collections"
-              onClick={() => {
-                setShowComponent({login: false, register: false, collection: true, instruction: false})
-                setShowNewPlacePopup(false);
-                setCurrentPlaceId(null);
-              }
-              }
-            >
-              Collections
-            </button>
-           
-            <button className="logoutbutton" onClick={handleLogout}>
-              Log out
-            </button>
-          </div>
-        ) : (
-          <div className="buttons">
-            <button
-              className="button login"
-              onClick={() => {
-                setShowComponent({login: true, register: false, collection: false, instruction: false})
-                setShowNewPlacePopup(false);
-                setCurrentPlaceId(null);
-              }
-              }
-            >
-              Log in
-            </button>
-            <button
-              className="button register"
-              onClick={() => {
-                setShowComponent({login: false, register: true, collection: false, instruction: false})
-                setShowNewPlacePopup(false);
-                setCurrentPlaceId(null);
-              }
-              }
-            >
-              Register
-            </button>
-          </div>
-        )}
         {showComponent.register &&
           <Register
             setShowComponent={setShowComponent}
